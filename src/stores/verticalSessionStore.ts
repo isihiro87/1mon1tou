@@ -1,7 +1,18 @@
 import { create } from 'zustand';
-import type { VerticalVideo, FeedbackType } from '../types';
+import type { VerticalVideo, FeedbackType, VideoSessionStats, SessionStatsData } from '../types';
 import { RangeContentService } from '../services/RangeContentService';
 import { useRangeStore } from './rangeStore';
+
+// 動画IDごとの統計を管理するマップ型
+type VideoStatsMap = Map<string, {
+  displayName: string;
+  viewCount: number;
+  feedbackCounts: {
+    perfect: number;
+    unsure: number;
+    bad: number;
+  };
+}>;
 
 interface VerticalSessionState {
   // 状態
@@ -16,6 +27,9 @@ interface VerticalSessionState {
   isSecondRound: boolean;              // 2週目かどうか
   videosSinceReview: number;           // pendingReview設定後に見た動画数
 
+  // 統計用状態
+  videoStatsMap: VideoStatsMap;
+
   // アクション
   startSession: () => Promise<void>;
   submitFeedback: (feedback: FeedbackType) => void;
@@ -29,6 +43,7 @@ interface VerticalSessionState {
   isComplete: () => boolean;
   getTotalCount: () => number;
   getViewedCount: () => number;
+  getSessionStats: () => SessionStatsData;
 }
 
 export const useVerticalSessionStore = create<VerticalSessionState>((set, get) => ({
@@ -40,6 +55,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   secondRoundQueue: [],
   isSecondRound: false,
   videosSinceReview: 0,
+  videoStatsMap: new Map(),
 
   startSession: async () => {
     set({ isLoading: true, error: null });
@@ -73,6 +89,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
         secondRoundQueue: [],
         isSecondRound: false,
         videosSinceReview: 0,
+        videoStatsMap: new Map(),
       });
     } catch (err) {
       set({
@@ -83,10 +100,28 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   },
 
   submitFeedback: (feedback: FeedbackType) => {
-    const { videos, currentIndex, pendingReview, secondRoundQueue, isSecondRound, videosSinceReview } = get();
+    const { videos, currentIndex, pendingReview, secondRoundQueue, isSecondRound, videosSinceReview, videoStatsMap } = get();
     const currentVideo = videos[currentIndex];
 
     if (!currentVideo) return;
+
+    // 統計を記録
+    const newVideoStatsMap = new Map(videoStatsMap);
+    const existingStats = newVideoStatsMap.get(currentVideo.id);
+    if (existingStats) {
+      existingStats.viewCount += 1;
+      existingStats.feedbackCounts[feedback] += 1;
+    } else {
+      newVideoStatsMap.set(currentVideo.id, {
+        displayName: currentVideo.displayName,
+        viewCount: 1,
+        feedbackCounts: {
+          perfect: feedback === 'perfect' ? 1 : 0,
+          unsure: feedback === 'unsure' ? 1 : 0,
+          bad: feedback === 'bad' ? 1 : 0,
+        },
+      });
+    }
 
     let newVideos = [...videos];
     let newPendingReview = pendingReview;
@@ -136,6 +171,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
         secondRoundQueue: newSecondRoundQueue,
         isSecondRound: true,
         videosSinceReview: newVideosSinceReview,
+        videoStatsMap: newVideoStatsMap,
       });
       return;
     }
@@ -146,6 +182,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       pendingReview: newPendingReview,
       secondRoundQueue: newSecondRoundQueue,
       videosSinceReview: newVideosSinceReview,
+      videoStatsMap: newVideoStatsMap,
     });
   },
 
@@ -180,6 +217,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       secondRoundQueue: [],
       isSecondRound: false,
       videosSinceReview: 0,
+      videoStatsMap: new Map(),
     });
   },
 
@@ -202,5 +240,38 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   getViewedCount: () => {
     const { currentIndex } = get();
     return currentIndex;
+  },
+
+  getSessionStats: (): SessionStatsData => {
+    const { videoStatsMap } = get();
+
+    // 動画別の統計を配列に変換
+    const videoStats: VideoSessionStats[] = [];
+    let totalViews = 0;
+    const totalFeedbacks = {
+      perfect: 0,
+      unsure: 0,
+      bad: 0,
+    };
+
+    videoStatsMap.forEach((stats, videoId) => {
+      videoStats.push({
+        videoId,
+        displayName: stats.displayName,
+        viewCount: stats.viewCount,
+        feedbackCounts: { ...stats.feedbackCounts },
+      });
+
+      totalViews += stats.viewCount;
+      totalFeedbacks.perfect += stats.feedbackCounts.perfect;
+      totalFeedbacks.unsure += stats.feedbackCounts.unsure;
+      totalFeedbacks.bad += stats.feedbackCounts.bad;
+    });
+
+    return {
+      totalViews,
+      totalFeedbacks,
+      videoStats,
+    };
   },
 }));

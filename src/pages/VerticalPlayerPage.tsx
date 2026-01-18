@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
 import { VerticalVideoPlayer } from '../components/player/VerticalVideoPlayer';
 import { FeedbackSelector } from '../components/player/FeedbackSelector';
+import { SessionCompleteScreen } from '../components/player/SessionCompleteScreen';
 import { Loading } from '../components/common/Loading';
 import { Button } from '../components/common/Button';
 import { useVerticalSessionStore } from '../stores/verticalSessionStore';
@@ -24,6 +25,7 @@ export function VerticalPlayerPage() {
     clearSession,
     getCurrentVideo,
     isComplete,
+    getSessionStats,
   } = useVerticalSessionStore();
 
   // セッション開始
@@ -79,6 +81,12 @@ export function VerticalPlayerPage() {
     startSession();
   }, [clearSession, startSession]);
 
+  // 範囲を変更
+  const handleChangeRange = useCallback(() => {
+    clearSession();
+    navigate('/range-select');
+  }, [clearSession, navigate]);
+
   // ローディング中
   if (isLoading) {
     return (
@@ -112,28 +120,14 @@ export function VerticalPlayerPage() {
 
   // 完了画面（全動画視聴後）
   if (videos.length > 0 && sessionComplete) {
+    const stats = getSessionStats();
     return (
-      <div className="flex flex-col h-dvh bg-white">
-        <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
-          <div className="text-center">
-            <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">お疲れさまでした!</h2>
-            <p className="text-gray-600 text-lg">学習を完了しました</p>
-          </div>
-
-          <div className="flex flex-col gap-3 w-full max-w-xs">
-            <Button variant="primary" size="lg" onClick={handleRestart}>
-              もう一度
-            </Button>
-            <Button variant="secondary" size="lg" onClick={() => navigate('/range-select')}>
-              範囲を変更
-            </Button>
-            <Button variant="secondary" size="lg" onClick={handleGoHome}>
-              ホームへ戻る
-            </Button>
-          </div>
-        </div>
-      </div>
+      <SessionCompleteScreen
+        stats={stats}
+        onRestart={handleRestart}
+        onChangeRange={handleChangeRange}
+        onGoHome={handleGoHome}
+      />
     );
   }
 
