@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" style="background-color: white;">
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&amp;display=swap");
+text { font-family: "Crimson Text", "Times New Roman", serif; font-weight: bold; }
+.math-it { font-family: "Times New Roman", Times, serif; font-style: italic; font-weight: normal; }
+</style>
+<polygon points="300.0,206.34528197926954 135.53768906712793,559.0358459378085 464.4623109328721,559.0358459378085" stroke="#000000" stroke-width="2.5" fill="none" fill-opacity="1.0" stroke-linejoin="round" />
+<line x1="300.0" y1="206.34528197926954" x2="382.231155466436" y2="30.0" stroke="#000000" stroke-width="2.5"  stroke-linecap="round" />
+<text x="278.07169187561703" y="206.34528197926954" font-size="20" fill="black" text-anchor="middle" dominant-baseline="middle" opacity="1" >A</text>
+<text x="102.64522688055351" y="570.0" font-size="20" fill="black" text-anchor="middle" dominant-baseline="middle" opacity="1" >B</text>
+<text x="497.35477311944646" y="570.0" font-size="20" fill="black" text-anchor="middle" dominant-baseline="middle" opacity="1" >C</text>
+<line x1="234.9910177064247" y1="384.6725924529531" x2="205.1803230919238" y2="370.7716372592913" stroke="#000000" stroke-width="1"  stroke-linecap="round" />
+<line x1="230.35736597520412" y1="394.60949065778675" x2="200.54667136070321" y2="380.708535464125" stroke="#000000" stroke-width="1"  stroke-linecap="round" />
+<line x1="394.8196769080762" y1="370.7716372592913" x2="365.00898229357523" y2="384.6725924529531" stroke="#000000" stroke-width="1"  stroke-linecap="round" />
+<line x1="399.45332863929684" y1="380.708535464125" x2="369.6426340247959" y2="394.60949065778675" stroke="#000000" stroke-width="1"  stroke-linecap="round" />
+<text x="398.67738655972323" y="206.34528197926954" font-size="24" fill="black" text-anchor="middle" dominant-baseline="middle" opacity="1" >130°</text>
+<path d="M 327.8019103873235 265.9666712082714 A 65.78492437314883 65.78492437314883 0 0 0 327.8019103873235 146.72389275026768" fill="none" stroke="black" stroke-width="2" opacity="1" style=""></path>
+<text x="204.8907421668296" y="514.8530783117857" font-size="30.0" fill="black" text-anchor="middle" dominant-baseline="middle" opacity="1" class="math-it">x</text>
+<path d="M 190.35845937808529 559.0358459378085 A 54.82077031095736 54.82077031095736 0 0 0 158.70594772323085 509.3513549136403" fill="none" stroke="black" stroke-width="2" opacity="1" style=""></path>
+<circle cx="204.8907421668296" cy="514.8530783117857" r="37.5" fill="none" stroke="red" stroke-width="3" opacity="0" style=""></circle>
+</svg>

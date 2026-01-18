@@ -1,0 +1,94 @@
+{
+  "questions": [
+    {
+      "id": "q001",
+      "videoId": "v001",
+      "questionText": "縄文時代の人々が住んでいた住居を何というか？",
+      "correctAnswer": "竪穴住居",
+      "wrongAnswers": ["高床倉庫", "方形周溝墓", "環濠集落"],
+      "explanation": "縄文時代の人々は、地面を掘りくぼめて作った竪穴住居に住んでいました。",
+      "orderIndex": 1
+    },
+    {
+      "id": "q002",
+      "videoId": "v001",
+      "questionText": "縄文時代に使われていた土器の特徴は何か？",
+      "correctAnswer": "縄目の模様",
+      "wrongAnswers": ["弥生式の薄さ", "須恵器の硬さ", "土師器の赤さ"],
+      "explanation": "縄文土器は縄を押し付けてつけた縄目模様が特徴です。",
+      "orderIndex": 2
+    },
+    {
+      "id": "q003",
+      "videoId": "v002",
+      "questionText": "弥生時代に日本に伝わった農業技術は何か？",
+      "correctAnswer": "稲作",
+      "wrongAnswers": ["養蚕", "製鉄", "漆器作り"],
+      "explanation": "弥生時代には大陸から稲作が伝わり、人々の生活が大きく変わりました。",
+      "orderIndex": 1
+    },
+    {
+      "id": "q004",
+      "videoId": "v002",
+      "questionText": "弥生時代の遺跡として有名な佐賀県の遺跡は何か？",
+      "correctAnswer": "吉野ヶ里遺跡",
+      "wrongAnswers": ["三内丸山遺跡", "登呂遺跡", "大森貝塚"],
+      "explanation": "吉野ヶ里遺跡は弥生時代の大規模な環濠集落の遺跡です。",
+      "orderIndex": 2
+    },
+    {
+      "id": "q005",
+      "videoId": "v003",
+      "questionText": "聖徳太子が定めた、役人の位を色で分けた制度は何か？",
+      "correctAnswer": "冠位十二階",
+      "wrongAnswers": ["十七条の憲法", "遣隋使", "大化の改新"],
+      "explanation": "冠位十二階は、家柄に関係なく能力のある人を役人に登用する制度です。",
+      "orderIndex": 1
+    },
+    {
+      "id": "q006",
+      "videoId": "v003",
+      "questionText": "聖徳太子が役人の心構えを示したものは何か？",
+      "correctAnswer": "十七条の憲法",
+      "wrongAnswers": ["冠位十二階", "班田収授法", "墾田永年私財法"],
+      "explanation": "十七条の憲法は、役人が守るべき心構えを17か条にまとめたものです。",
+      "orderIndex": 2
+    },
+    {
+      "id": "q007",
+      "videoId": "v004",
+      "questionText": "1185年に鎌倉幕府を開いた人物は誰か？",
+      "correctAnswer": "源頼朝",
+      "wrongAnswers": ["源義経", "平清盛", "北条時宗"],
+      "explanation": "源頼朝は壇ノ浦の戦いで平氏を滅ぼした後、鎌倉幕府を開きました。",
+      "orderIndex": 1
+    },
+    {
+      "id": "q008",
+      "videoId": "v004",
+      "questionText": "鎌倉幕府で将軍を補佐した役職は何か？",
+      "correctAnswer": "執権",
+      "wrongAnswers": ["管領", "老中", "大老"],
+      "explanation": "執権は北条氏が代々務め、実際の政治を行いました。",
+      "orderIndex": 2
+    },
+    {
+      "id": "q009",
+      "videoId": "v005",
+      "questionText": "足利義満が京都に建てた建物は何か？",
+      "correctAnswer": "金閣",
+      "wrongAnswers": ["銀閣", "東大寺", "平等院鳳凰堂"],
+      "explanation": "金閣（鹿苑寺）は足利義満が建てた北山文化を代表する建物です。",
+      "orderIndex": 1
+    },
+    {
+      "id": "q010",
+      "videoId": "v005",
+      "questionText": "室町時代に発達した、床の間のある住宅様式は何か？",
+      "correctAnswer": "書院造",
+      "wrongAnswers": ["寝殿造", "城郭建築", "数寄屋造"],
+      "explanation": "書院造は現代の和室の原型となった住宅様式です。",
+      "orderIndex": 2
+    }
+  ]
+}

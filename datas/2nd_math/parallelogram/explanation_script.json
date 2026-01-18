@@ -1,0 +1,90 @@
+{
+    "video_title": "中2数学 平行四辺形の超基本問題3選",
+    "scenes": [
+        {
+            "id": "intro",
+            "section_title": "オープニング",
+            "script": "中2数学！平行四辺形の超基本問題3選！これだけは絶対覚えておこう！",
+            "audio": "00-parallelogram.wav",
+            "visual_image": "figure_1_0_base.png",
+            "overlay_text": "平行四辺形\n超基本3選"
+        },
+        {
+            "id": "q1_intro",
+            "section_title": "第1問：辺の長さ",
+            "script": "第1問！xとyの長さを求めよ。",
+            "visual_image": "figure_1_0_base.png",
+            "overlay_text": "Q1. x, yの長さは？"
+        },
+        {
+            "id": "q1_explanation_1",
+            "section_title": "第1問：解説（AB=CD）",
+            "script": "平行四辺形の性質その1！向かい合う辺の長さは等しい！だから、xは4.5cm！",
+            "visual_image": "figure_1_1_highlight_AB_CD.png",
+            "overlay_text": "向かい合う辺は等しい\nx = 4.5"
+        },
+        {
+            "id": "q1_explanation_2",
+            "section_title": "第1問：解説（BC=DA）",
+            "script": "同じように、yは6cm！楽勝だね！",
+            "visual_image": "figure_1_2_highlight_BC_DA.png",
+            "overlay_text": "y = 6"
+        },
+        {
+            "id": "q2_intro",
+            "section_title": "第2問：角度",
+            "script": "第2問！xとyの角度を求めよ。",
+            "visual_image": "figure_2_0_base.png",
+            "overlay_text": "Q2. x, yの角度は？"
+        },
+        {
+            "id": "q2_explanation_1",
+            "section_title": "第2問：解説（対角）",
+            "script": "性質その2！向かい合う角の大きさは等しい！だからxは100度！",
+            "visual_image": "figure_2_1_highlight_A_C.png",
+            "overlay_text": "向かい合う角は等しい\nx = 100°"
+        },
+        {
+            "id": "q2_explanation_2",
+            "section_title": "第2問：解説（隣り合う角）",
+            "script": "そして、隣り合う角を足すと180度になるんだ。だからyは180引く100で、80度！",
+            "visual_image": "figure_2_2_highlight_A_B.png",
+            "overlay_text": "隣り合う角の和 = 180°\ny = 180 - 100 = 80°"
+        },
+        {
+            "id": "q3_intro",
+            "section_title": "第3問：対角線",
+            "script": "ラスト第3問！xとyの値を求めよ。",
+            "visual_image": "figure_3_0_base.png",
+            "overlay_text": "Q3. x, yの値は？"
+        },
+        {
+            "id": "q3_explanation_1",
+            "section_title": "第3問：解説（対角線AC）",
+            "script": "性質その3！対角線は、それぞれの中点で交わる！つまり半分こ！",
+            "visual_image": "figure_3_1_highlight_AC.png",
+            "overlay_text": "対角線は中点で交わる"
+        },
+        {
+            "id": "q3_explanation_2",
+            "section_title": "第3問：解説（yの計算）",
+            "script": "ACは10cmだから、yはその半分。つまり5cm！",
+            "visual_image": "figure_3_3_highlight_halves_AC.png",
+            "overlay_text": "y = 10 ÷ 2 = 5"
+        },
+        {
+            "id": "q3_explanation_3",
+            "section_title": "第3問：解説（xの計算）",
+            "script": "BDの方も同じ！片方が4cmなら、もう片方のxも4cmだね！",
+            "visual_image": "figure_3_4_highlight_halves_BD.png",
+            "overlay_text": "x = 4"
+        },
+        {
+            "id": "outro",
+            "section_title": "エンディング",
+            "script": "平行四辺形の3つの性質、完璧にマスターしよう！",
+            "visual_image": "figure_1_0_base.png",
+            "overlay_text": "まとめ\n1. 向かい合う辺は等しい\n2. 向かい合う角は等しい\n3. 対角線は中点で交わる"
+        }
+    ]
+}

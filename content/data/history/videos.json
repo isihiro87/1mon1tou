@@ -1,0 +1,59 @@
+{
+  "videos": [
+    {
+      "id": "v001",
+      "subjectId": "history",
+      "unitId": "ancient",
+      "title": "縄文時代の生活",
+      "description": "縄文時代の人々の暮らしについて学びます",
+      "filename": "001_jomon.mp4",
+      "videoPath": "content/movies/history/ancient/001_jomon.mp4",
+      "durationSeconds": 120,
+      "orderIndex": 1
+    },
+    {
+      "id": "v002",
+      "subjectId": "history",
+      "unitId": "ancient",
+      "title": "弥生時代と稲作の伝来",
+      "description": "弥生時代の特徴と稲作について学びます",
+      "filename": "002_yayoi.mp4",
+      "videoPath": "content/movies/history/ancient/002_yayoi.mp4",
+      "durationSeconds": 150,
+      "orderIndex": 2
+    },
+    {
+      "id": "v003",
+      "subjectId": "history",
+      "unitId": "ancient",
+      "title": "聖徳太子の政治改革",
+      "description": "聖徳太子による政治改革について学びます",
+      "filename": "003_shotoku.mp4",
+      "videoPath": "content/movies/history/ancient/003_shotoku.mp4",
+      "durationSeconds": 180,
+      "orderIndex": 3
+    },
+    {
+      "id": "v004",
+      "subjectId": "history",
+      "unitId": "medieval",
+      "title": "鎌倉幕府の成立",
+      "description": "源頼朝と鎌倉幕府について学びます",
+      "filename": "001_kamakura.mp4",
+      "videoPath": "content/movies/history/medieval/001_kamakura.mp4",
+      "durationSeconds": 160,
+      "orderIndex": 1
+    },
+    {
+      "id": "v005",
+      "subjectId": "history",
+      "unitId": "medieval",
+      "title": "室町文化と金閣寺",
+      "description": "室町時代の文化について学びます",
+      "filename": "002_muromachi.mp4",
+      "videoPath": "content/movies/history/medieval/002_muromachi.mp4",
+      "durationSeconds": 140,
+      "orderIndex": 2
+    }
+  ]
+}

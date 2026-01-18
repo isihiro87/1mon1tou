@@ -1,0 +1,507 @@
+import React from 'react';
+import { staticFile, Img } from 'remotion';
+
+export type Scene = {
+  id: string;
+  durationInFrames: number;
+  audioSrc: string;
+  boardContent: () => React.ReactElement;
+  overlayText?: string;
+  characterComment: string;
+  characterCommentColor?: string;
+  characterCommentImportant?: boolean;
+  characterCommentContinuous?: boolean; // 前回と同じcharacterCommentを表示し続ける
+  overlayTextContinuous?: boolean; // 前回と同じoverlayTextを表示し続ける
+  role?: 'maintitle' | 'subtitle' | 'answer' | 'explanation' | 'transition' | 'question'; // シーンの役割
+  roleGroup?: string; // 同じグループのsubtitleは同じoverlayTextを表示し続ける（例: '1-1', '1-2'）
+};
+
+export const GLOBAL_TITLE = '平行四辺形の性質';
+
+const ImageBoard = ({ src }: { src: string }) => {
+  console.log('ImageBoard rendering with src:', src);
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
+      <Img
+        src={src}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+        }}
+      />
+    </div>
+  );
+};
+
+const PropertiesSummary = () => {
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: '40px 50px',
+      fontFamily: 'sans-serif',
+      backgroundColor: '#ffffff',
+      boxSizing: 'border-box',
+    }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '35px',
+        maxWidth: '100%',
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+      }}>
+        <div style={{
+          fontSize: '56px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          marginBottom: '20px',
+          color: '#1a1a1a',
+          letterSpacing: '1px',
+        }}>
+          平行四辺形の性質
+        </div>
+        
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '30px',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '30px',
+            padding: '30px 40px',
+            backgroundColor: '#ffffff',
+            borderRadius: '16px',
+            border: '6px solid #4ECDC4',
+            boxShadow: '0 4px 20px rgba(78, 205, 196, 0.2)',
+          }}>
+            <div style={{
+              fontSize: '72px',
+              fontWeight: 'bold',
+              color: '#4ECDC4',
+              minWidth: '80px',
+              textAlign: 'center',
+              lineHeight: '1',
+            }}>1</div>
+            <div style={{
+              fontSize: '48px',
+              color: '#1a1a1a',
+              lineHeight: '1.4',
+              fontWeight: '600',
+              whiteSpace: 'pre-line',
+            }}>向かい合う辺は等しい</div>
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '30px',
+            padding: '30px 40px',
+            backgroundColor: '#ffffff',
+            borderRadius: '16px',
+            border: '6px solid #4ECDC4',
+            boxShadow: '0 4px 20px rgba(78, 205, 196, 0.2)',
+          }}>
+            <div style={{
+              fontSize: '72px',
+              fontWeight: 'bold',
+              color: '#4ECDC4',
+              minWidth: '80px',
+              textAlign: 'center',
+              lineHeight: '1',
+            }}>2</div>
+            <div style={{
+              fontSize: '48px',
+              color: '#1a1a1a',
+              lineHeight: '1.4',
+              fontWeight: '600',
+            }}>向かい合う角は等しい</div>
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '30px',
+            padding: '30px 40px',
+            backgroundColor: '#ffffff',
+            borderRadius: '16px',
+            border: '6px solid #4ECDC4',
+            boxShadow: '0 4px 20px rgba(78, 205, 196, 0.2)',
+          }}>
+            <div style={{
+              fontSize: '72px',
+              fontWeight: 'bold',
+              color: '#4ECDC4',
+              minWidth: '80px',
+              textAlign: 'center',
+              lineHeight: '1',
+            }}>3</div>
+            <div style={{
+              fontSize: '48px',
+              color: '#1a1a1a',
+              lineHeight: '1.4',
+              fontWeight: '600',
+              whiteSpace: 'pre-line',
+            }}>対角線は中点で交わる</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const mathLessonData: Scene[] = [
+  {
+    id: 'scene0',
+    durationInFrames: 38,
+    audioSrc: staticFile('audio/parallelogram/00-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_combined.png')} />,
+    overlayText: '',
+    characterComment: '',
+    characterCommentColor: '#FF6B6B',
+    role: 'maintitle',
+  },
+  {
+    id: 'scene1',
+    durationInFrames: 89,
+    audioSrc: staticFile('audio/parallelogram/01-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_combined.png')} />,
+    overlayText: '',
+    characterComment: '',
+    characterCommentColor: '#FF6B6B',
+    role: 'maintitle',
+  },
+  {
+    id: 'scene2',
+    durationInFrames: 65,
+    audioSrc: staticFile('audio/parallelogram/02-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_combined.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'maintitle',
+  },
+  {
+    id: 'scene3',
+    durationInFrames: 33,
+    audioSrc: staticFile('audio/parallelogram/03-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_0_base.png')} />,
+    overlayText: '第1問！',
+    characterComment: '',
+    role: 'subtitle',
+    roleGroup: '1-1',
+  },
+  {
+    id: 'scene4',
+    durationInFrames: 67,
+    audioSrc: staticFile('audio/parallelogram/04-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_0_base.png')} />,
+    overlayTextContinuous: true,
+    characterComment: 'Q1. x, yの長さは？',
+    role: 'question',
+    roleGroup: '1-2',
+  },
+  {
+    id: 'scene5',
+    durationInFrames: 76,
+    audioSrc: staticFile('audio/parallelogram/05-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_0_base.png')} />,
+    overlayText: '',
+    characterComment: '性質その1',
+    role: 'subtitle',
+    roleGroup: '1-2',
+  },
+  {
+    id: 'scene6',
+    durationInFrames: 68,
+    audioSrc: staticFile('audio/parallelogram/06-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_1_highlight_AB_CD.png')} />,
+    overlayText: '',
+    characterComment: '向かい合う辺は\n等しい',
+    characterCommentColor: '#4ECDC4',
+    role: 'explanation',
+  },
+  {
+    id: 'scene7',
+    durationInFrames: 26,
+    audioSrc: staticFile('audio/parallelogram/07-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_1_highlight_AB_CD.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'explanation',
+  },
+  {
+    id: 'scene8',
+    durationInFrames: 59,
+    audioSrc: staticFile('audio/parallelogram/08-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_1_highlight_AB_CD.png')} />,
+    overlayText: '',
+    characterComment: 'x = 4.5cm',
+    characterCommentColor: '#FFD93D',
+    characterCommentImportant: true,
+    role: 'answer',
+  },
+  {
+    id: 'scene9',
+    durationInFrames: 33,
+    audioSrc: staticFile('audio/parallelogram/09-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_2_highlight_BC_DA.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'transition',
+  },
+  {
+    id: 'scene10',
+    durationInFrames: 43,
+    audioSrc: staticFile('audio/parallelogram/10-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_2_highlight_BC_DA.png')} />,
+    overlayText: '',
+    characterComment: 'y = 6cm',
+    characterCommentColor: '#FFD93D',
+    characterCommentImportant: true,
+    role: 'answer',
+  },
+  {
+    id: 'scene11',
+    durationInFrames: 37,
+    audioSrc: staticFile('audio/parallelogram/11-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_1_2_highlight_BC_DA.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'transition',
+  },
+  {
+    id: 'scene12',
+    durationInFrames: 31,
+    audioSrc: staticFile('audio/parallelogram/12-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_0_base.png')} />,
+    overlayText: '第2問',
+    characterComment: '',
+    role: 'transition',
+  },
+  {
+    id: 'scene13',
+    durationInFrames: 68,
+    audioSrc: staticFile('audio/parallelogram/13-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_0_base.png')} />,
+    overlayTextContinuous: true,
+    characterComment: 'xとyの角度を求めよ',
+    role: 'question',
+    roleGroup: '2-1',
+  },
+  {
+    id: 'scene14',
+    durationInFrames: 41,
+    audioSrc: staticFile('audio/parallelogram/14-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_0_base.png')} />,
+    overlayText: '',
+    characterComment: '性質その2',
+    role: 'subtitle',
+    roleGroup: '2-1',
+  },
+  {
+    id: 'scene15',
+    durationInFrames: 70,
+    audioSrc: staticFile('audio/parallelogram/15-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_1_highlight_A_C.png')} />,
+    overlayText: '',
+    characterComment: '向かい合う角は\n等しい',
+    characterCommentColor: '#4ECDC4',
+    role: 'explanation',
+  },
+  {
+    id: 'scene16',
+    durationInFrames: 28,
+    audioSrc: staticFile('audio/parallelogram/16-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_1_highlight_A_C.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'explanation',
+  },
+  {
+    id: 'scene17',
+    durationInFrames: 41,
+    audioSrc: staticFile('audio/parallelogram/17-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_1_highlight_A_C.png')} />,
+    overlayText: '',
+    characterComment: 'x = 100°',
+    characterCommentColor: '#FFD93D',
+    characterCommentImportant: true,
+    role: 'answer',
+  },
+  {
+    id: 'scene18',
+    durationInFrames: 121,
+    audioSrc: staticFile('audio/parallelogram/18-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_2_highlight_A_B.png')} />,
+    overlayText: '',
+    characterComment: '隣り合う角の和\n = 180°',
+    characterCommentColor: '#4ECDC4',
+    role: 'explanation',
+  },
+  {
+    id: 'scene19',
+    durationInFrames: 77,
+    audioSrc: staticFile('audio/parallelogram/19-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_2_highlight_A_B.png')} />,
+    overlayText: '',
+    characterComment: 'y = 180° - 100°',
+    role: 'explanation',
+  },
+  {
+    id: 'scene20',
+    durationInFrames: 33,
+    audioSrc: staticFile('audio/parallelogram/20-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_2_2_highlight_A_B.png')} />,
+    overlayText: '',
+    characterComment: 'y = 80°',
+    characterCommentColor: '#FFD93D',
+    characterCommentImportant: true,
+    role: 'answer',
+  },
+  {
+    id: 'scene21',
+    durationInFrames: 43,
+    audioSrc: staticFile('audio/parallelogram/21-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_0_base.png')} />,
+    overlayText: '第3問！',
+    characterComment: '',
+    role: 'transition',
+  },
+  {
+    id: 'scene22',
+    durationInFrames: 66,
+    audioSrc: staticFile('audio/parallelogram/22-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_0_base.png')} />,
+    characterComment: 'x, yの値を求めよ',
+    role: 'question',
+    roleGroup: '3-1',
+  },
+  {
+    id: 'scene23',
+    durationInFrames: 43,
+    audioSrc: staticFile('audio/parallelogram/23-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_0_base.png')} />,
+    overlayText: '',
+    characterComment: '性質その3',
+    role: 'subtitle',
+    roleGroup: '3-1',
+  },
+  {
+    id: 'scene24',
+    durationInFrames: 101,
+    audioSrc: staticFile('audio/parallelogram/24-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_colored.png')} />,
+    overlayText: '',
+    characterComment: '対角線は\n中点で交わる',
+    characterCommentColor: '#4ECDC4',
+    role: 'explanation',
+  },
+  {
+    id: 'scene25',
+    durationInFrames: 44,
+    audioSrc: staticFile('audio/parallelogram/25-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_colored.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'explanation',
+  },
+  {
+    id: 'scene26',
+    durationInFrames: 98,
+    audioSrc: staticFile('audio/parallelogram/26-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_3_highlight_halves_AC.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'explanation',
+  },
+  {
+    id: 'scene27',
+    durationInFrames: 29,
+    audioSrc: staticFile('audio/parallelogram/27-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_3_highlight_halves_AC.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'explanation',
+  },
+  {
+    id: 'scene28',
+    durationInFrames: 31,
+    audioSrc: staticFile('audio/parallelogram/28-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_3_highlight_halves_AC.png')} />,
+    overlayText: '',
+    characterComment: 'x = 5cm',
+    characterCommentColor: '#FFD93D',
+    characterCommentImportant: true,
+    role: 'answer',
+  },
+  {
+    id: 'scene29',
+    durationInFrames: 51,
+    audioSrc: staticFile('audio/parallelogram/29-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_4_highlight_halves_BD.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'transition',
+  },
+  {
+    id: 'scene30',
+    durationInFrames: 54,
+    audioSrc: staticFile('audio/parallelogram/30-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_4_highlight_halves_BD.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'explanation',
+  },
+  {
+    id: 'scene31',
+    durationInFrames: 41,
+    audioSrc: staticFile('audio/parallelogram/31-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_4_highlight_halves_BD.png')} />,
+    overlayText: '',
+    characterComment: '',
+    role: 'explanation',
+  },
+  {
+    id: 'scene32',
+    durationInFrames: 52,
+    audioSrc: staticFile('audio/parallelogram/32-parallelogram.wav'),
+    boardContent: () => <ImageBoard src={staticFile('images/parallelogram/figure_3_4_highlight_halves_BD.png')} />,
+    overlayText: '',
+    characterComment: 'y = 4cm',
+    characterCommentColor: '#FFD93D',
+    characterCommentImportant: true,
+    role: 'answer',
+  },
+  {
+    id: 'scene33',
+    durationInFrames: 74,
+    audioSrc: staticFile('audio/parallelogram/33-parallelogram.wav'),
+    boardContent: () => <PropertiesSummary />,
+    overlayText: '',
+    characterComment: '3つの性質を\nマスター',
+    characterCommentColor: '#FF6B6B',
+  },
+  {
+    id: 'scene34',
+    durationInFrames: 55,
+    audioSrc: staticFile('audio/parallelogram/34-parallelogram.wav'),
+    boardContent: () => <PropertiesSummary />,
+    overlayText: '',
+    characterCommentContinuous: true,
+    characterComment: '',
+  },
+];

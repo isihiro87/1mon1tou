@@ -1,0 +1,251 @@
+import { staticFile } from 'remotion';
+import { QuizBoard, RhythmBoard, EnglishLessonBoard } from './components/english';
+import { Scene } from './data';
+
+export type { Scene };
+
+const AUDIO_BASE = 'audio/compare/long_explanation_part';
+
+const TOPIC = '';
+
+export const englishLessonData: Scene[] = [
+    // 01: Quiz (002.wav)
+    {
+        id: 'scene1',
+        durationInFrames: 48, // 2.27s
+        audioSrc: staticFile(`${AUDIO_BASE}002.wav`),
+        boardContent: () => <QuizBoard step="question" japaneseText="トムはクラスで一番背が高い" englishText="Tom is （　）（　） in his class." />,
+        overlayText: '',
+        characterComment: '',
+        role: 'question',
+    },
+    // 02: Intro (003.wav)
+    {
+        id: 'scene2',
+        durationInFrames: 140, // 4.68s
+        audioSrc: staticFile(`${AUDIO_BASE}003.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={["Tom is tall."]}
+            explanation="「トムは背が高い」だったら"
+            imageSrc={staticFile('images/tom_only.png')}
+            sentenceDelay={60}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 03: Focus on tall (004.wav)
+    {
+        id: 'scene3',
+        durationInFrames: 74, // 2.48s
+        audioSrc: staticFile(`${AUDIO_BASE}004.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>Tom is <span style={{ color: '#E65100' }}>tall</span>.</span>]}
+            explanation="is の後ろの tall に注目！"
+            imageSrc={staticFile('images/tom_only.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 04: tall -> the (005.wav)
+    {
+        id: 'scene4',
+        durationInFrames: 51, // 1.69s
+        audioSrc: staticFile(`${AUDIO_BASE}005.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>Tom is <span style={{ color: '#E65100' }}>tall</span>.</span>]}
+            explanation={<span>tall の前に the <br /> 後ろに est</span>}
+            imageSrc={staticFile('images/tom_only.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 05: behind (006.wav)
+    {
+        id: 'scene5',
+        durationInFrames: 20, // 0.68s
+        audioSrc: staticFile(`${AUDIO_BASE}006.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>Tom is <span style={{ color: '#E65100' }}>tall</span>.</span>]}
+            explanation={<span>tall の前に the <br /> 後ろに est</span>}
+            imageSrc={staticFile('images/tom_only.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 06: est (007.wav)
+    {
+        id: 'scene6',
+        durationInFrames: 59, // 1.96s
+        audioSrc: staticFile(`${AUDIO_BASE}007.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>Tom is <span style={{ color: '#E65100' }}>tall</span>.</span>]}
+            explanation={<span>tall の前に the <br /> 後ろに est</span>}
+            imageSrc={staticFile('images/tom_only.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 07: the tallest (008.wav)
+    {
+        id: 'scene7',
+        durationInFrames: 59, // 1.97s
+        audioSrc: staticFile(`${AUDIO_BASE}008.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>Tom is <span style={{ color: '#E91E63' }}>the tallest</span>.</span>]}
+            explanation="the tallest にすると"
+            imageSrc={staticFile('images/tom_tallest_in_class.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 08: Meaning (009.wav)
+    {
+        id: 'scene8',
+        durationInFrames: 72, // 2.41s
+        audioSrc: staticFile(`${AUDIO_BASE}009.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>Tom is <span style={{ color: '#E91E63' }}>the tallest</span>.</span>]}
+            explanation="「一番背が高い」に変身！"
+            imageSrc={staticFile('images/tom_tallest_in_class.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 09: Usage (010.wav)
+    {
+        id: 'scene9',
+        durationInFrames: 162, // 5.4s
+        audioSrc: staticFile(`${AUDIO_BASE}010.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>Tom is <span style={{ color: '#E91E63' }}>the tallest</span>.</span>]}
+            explanation="「一番背が高い」に変身！"
+            imageSrc={staticFile('images/tom_tallest_in_class.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 10: Superlative name (011.wav)
+    {
+        id: 'scene10',
+        durationInFrames: 73, // 2.44s
+        audioSrc: staticFile(`${AUDIO_BASE}011.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>Tom is <span style={{ color: '#E91E63' }}>the tallest</span>.</span>]}
+            explanation="最上級"
+            imageSrc={staticFile('images/tom_tallest_in_class.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 11: tall -> tallest (012.wav)
+    {
+        id: 'scene11',
+        durationInFrames: 64, // 2.12s
+        audioSrc: staticFile(`${AUDIO_BASE}012.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>tall → <span style={{ color: '#E91E63' }}>the</span> tall<span style={{ color: '#E91E63' }}>est</span></span>]}
+            explanation=""
+            imageSrc={staticFile('images/tom_tallest_in_class.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 12: young -> youngest (013.wav)
+    {
+        id: 'scene12',
+        durationInFrames: 66, // 2.19s
+        audioSrc: staticFile(`${AUDIO_BASE}013.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>young → <span style={{ color: '#E91E63' }}>the</span> young<span style={{ color: '#E91E63' }}>est</span></span>]}
+            explanation=""
+            imageSrc={staticFile('images/tom_tallest_in_class.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 13: Rule summary (014.wav)
+    {
+        id: 'scene13',
+        durationInFrames: 134, // 4.48s
+        audioSrc: staticFile(`${AUDIO_BASE}014.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[<span>「1番～だ」 <br /> ⇒ <span style={{ color: '#E91E63' }}>the + est</span></span>]}
+            explanation=""
+            imageSrc={staticFile('images/tom_tallest_in_class.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 14: Full Sentence 1 (015.wav) -> REPLACED by RhythmBoard (016.wav)
+    {
+        id: 'scene15',
+        durationInFrames: 103, // 3.44s
+        audioSrc: staticFile(`${AUDIO_BASE}016.wav`),
+        boardContent: () => <RhythmBoard count={1} sentence={<span>He is <span style={{ color: '#E91E63' }}>the tallest</span> in his class.</span>} japaneseTranslation="トムはクラスで1番背が高い" />,
+        role: 'rhythm',
+        overlayText: '',
+        characterComment: '',
+    },
+    {
+        id: 'scene15',
+        durationInFrames: 103, // 3.44s
+        audioSrc: staticFile(`${AUDIO_BASE}016.wav`),
+        boardContent: () => <RhythmBoard count={1} sentence={<span>He is <span style={{ color: '#E91E63' }}>the tallest</span> in his class.</span>} japaneseTranslation="トムはクラスで1番背が高い" />,
+        role: 'rhythm',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 16: Master Rhythm (017.wav)
+    {
+        id: 'scene16',
+        durationInFrames: 51, // 1.71s
+        audioSrc: staticFile(`${AUDIO_BASE}017.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={["He is the tallest in his class."]}
+            explanation="このリズムをマスターしよう！"
+            imageSrc={staticFile('images/tom_tallest_in_class.png')}
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+    // 17: Comments (018.wav)
+    {
+        id: 'scene17',
+        durationInFrames: 75, // 2.49s
+        audioSrc: staticFile(`${AUDIO_BASE}018.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={["コメント欄をみてね！"]}
+            explanation="他の例文もチェック！"
+        />,
+        role: 'explanation',
+        overlayText: '',
+        characterComment: '',
+    },
+];

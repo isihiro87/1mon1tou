@@ -1,0 +1,44 @@
+{
+  "units": [
+    {
+      "id": "ancient",
+      "subjectId": "history",
+      "grade": 1,
+      "era": "古代",
+      "title": "古代日本の成り立ち",
+      "orderIndex": 1
+    },
+    {
+      "id": "medieval",
+      "subjectId": "history",
+      "grade": 1,
+      "era": "中世",
+      "title": "中世の武士と社会",
+      "orderIndex": 2
+    },
+    {
+      "id": "early-modern",
+      "subjectId": "history",
+      "grade": 2,
+      "era": "近世",
+      "title": "江戸時代の政治と文化",
+      "orderIndex": 3
+    },
+    {
+      "id": "modern",
+      "subjectId": "history",
+      "grade": 2,
+      "era": "近代",
+      "title": "明治維新と近代化",
+      "orderIndex": 4
+    },
+    {
+      "id": "contemporary",
+      "subjectId": "history",
+      "grade": 3,
+      "era": "現代",
+      "title": "戦後日本と現代社会",
+      "orderIndex": 5
+    }
+  ]
+}

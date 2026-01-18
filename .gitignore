@@ -44,3 +44,17 @@ coverage/
 # yarn.lock
 
 .claude/settings.local.json
+
+# Expo
+.expo/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# Cloudflare
+.wrangler/
+.dev.vars

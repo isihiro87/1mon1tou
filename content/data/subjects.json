@@ -1,0 +1,31 @@
+{
+  "subjects": [
+    {
+      "id": "history",
+      "name": "歴史",
+      "description": "日本の歴史を学ぶ",
+      "iconName": "book",
+      "colorCode": "#EF4444",
+      "orderIndex": 1,
+      "isActive": true
+    },
+    {
+      "id": "geography",
+      "name": "地理",
+      "description": "地理を学ぶ",
+      "iconName": "globe",
+      "colorCode": "#3B82F6",
+      "orderIndex": 2,
+      "isActive": false
+    },
+    {
+      "id": "civics",
+      "name": "公民",
+      "description": "公民を学ぶ",
+      "iconName": "users",
+      "colorCode": "#22C55E",
+      "orderIndex": 3,
+      "isActive": false
+    }
+  ]
+}

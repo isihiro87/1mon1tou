@@ -1,0 +1,92 @@
+import type { RangeFolder } from '../../types';
+import { FolderCheckbox } from './FolderCheckbox';
+
+interface ChapterGroupProps {
+  chapter: string;
+  folders: RangeFolder[];
+  selectedFolderIds: string[];
+  onToggle: (folderId: string) => void;
+  onToggleChapter: (chapter: string) => void;
+}
+
+// 章名を日本語に変換
+function getChapterDisplayName(chapter: string): string {
+  const chapterNames: Record<string, string> = {
+    '2-1': '第2章 古代文明の始まり',
+    '4-2': '第4章 江戸時代',
+    '6-1': '第6章 近代世界',
+  };
+  return chapterNames[chapter] || `第${chapter}章`;
+}
+
+export function ChapterGroup({
+  chapter,
+  folders,
+  selectedFolderIds,
+  onToggle,
+  onToggleChapter,
+}: ChapterGroupProps) {
+  const selectedCount = folders.filter(f => selectedFolderIds.includes(f.id)).length;
+  const isAllSelected = selectedCount === folders.length;
+  const isPartiallySelected = selectedCount > 0 && selectedCount < folders.length;
+
+  const handleChapterClick = () => {
+    onToggleChapter(chapter);
+  };
+
+  return (
+    <div className="mb-4">
+      {/* 章ヘッダー（クリック可能） */}
+      <button
+        type="button"
+        onClick={handleChapterClick}
+        className="w-full flex items-center gap-2 mb-2 p-2 -ml-2 rounded-lg cursor-pointer hover:bg-gray-100 active:bg-gray-200 transition-colors"
+      >
+        {/* チェックボックスアイコン */}
+        <div
+          className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+            isAllSelected
+              ? 'bg-blue-500 border-blue-500'
+              : isPartiallySelected
+                ? 'bg-blue-200 border-blue-500'
+                : 'border-gray-300'
+          }`}
+        >
+          {isAllSelected && (
+            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+          {isPartiallySelected && <div className="w-2 h-0.5 bg-blue-500 rounded" />}
+        </div>
+
+        <h3 className="text-sm font-semibold text-gray-700 flex-1 text-left">
+          {getChapterDisplayName(chapter)}
+        </h3>
+        <span
+          className={`text-xs px-2 py-0.5 rounded-full ${
+            isAllSelected
+              ? 'bg-green-100 text-green-700'
+              : isPartiallySelected
+                ? 'bg-blue-100 text-blue-700'
+                : 'bg-gray-100 text-gray-500'
+          }`}
+        >
+          {selectedCount}/{folders.length}
+        </span>
+      </button>
+
+      {/* フォルダ一覧 */}
+      <div className="flex flex-col gap-2 ml-2">
+        {folders.map(folder => (
+          <FolderCheckbox
+            key={folder.id}
+            folder={folder}
+            isSelected={selectedFolderIds.includes(folder.id)}
+            onToggle={onToggle}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

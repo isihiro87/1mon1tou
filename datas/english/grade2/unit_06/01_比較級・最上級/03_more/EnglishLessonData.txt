@@ -1,0 +1,229 @@
+import { staticFile } from 'remotion';
+import { QuizBoard, EnglishLessonBoard, RedText, FormulaContainer, FormulaItem, FormulaText, CenteredList, CrossedText, RedCross } from './components/english';
+import { Scene } from './data';
+
+export type { Scene };
+
+const AUDIO_BASE = 'audio/explain/part';
+// const TOPIC = '比較級';
+
+export const englishLessonData: Scene[] = [
+    {
+        id: 'scene-3-001',
+        durationInFrames: 28,
+        audioSrc: staticFile(`${AUDIO_BASE}01.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                imageSrc={staticFile('images/quiz_intro.png')}
+                speechBubble="さあ、解けるかな？"
+                japaneseText={<span style={{ fontSize: '55px' }}>この本はあの本より面白いです。</span>}
+                englishText={<>This book is (　) (　) than that book.</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-002',
+        durationInFrames: 86,
+        audioSrc: staticFile(`${AUDIO_BASE}02.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                imageSrc={staticFile('images/quiz_intro.png')}
+                speechBubble="さあ、解けるかな？"
+                japaneseText={<span style={{ fontSize: '55px' }}>この本はあの本より面白いです。</span>}
+                englishText={<>This book is (　) (　) than that book.</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-003',
+        durationInFrames: 97,
+        audioSrc: staticFile(`${AUDIO_BASE}03.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                // imageSrc={staticFile('images/quiz_intro.png')}
+                japaneseText={<>面白い</>}
+                englishText={<>interesting</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-004',
+        durationInFrames: 80,
+        audioSrc: staticFile(`${AUDIO_BASE}04.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                speechBubble=""
+                japaneseText={<><RedText>より</RedText>面白い</>}
+                englishText={<>interesting-er？</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-005',
+        durationInFrames: 78,
+        audioSrc: staticFile(`${AUDIO_BASE}05.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                speechBubble="ちょっと待って！"
+                speechBubbleDelay={35}
+                japaneseText={<><RedText>より</RedText>面白い</>}
+                englishText={<>interesting-er？</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-006',
+        durationInFrames: 67,
+        audioSrc: staticFile(`${AUDIO_BASE}06.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>長い単語</>}
+                englishText={<>interesting-er？</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-007',
+        durationInFrames: 55,
+        audioSrc: staticFile(`${AUDIO_BASE}07.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>長い単語</>}
+                englishText={<>interesting<RedCross>-er？</RedCross></>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-011',
+        durationInFrames: 156,
+        audioSrc: staticFile(`${AUDIO_BASE}11.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="vertical-split"
+                speechBubble="more を使うよ"
+                topContent={<><RedText>×</RedText> interesting-er</>}
+                bottomContent={<><RedText>〇</RedText> more interesting</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-012',
+        durationInFrames: 110,
+        audioSrc: staticFile(`${AUDIO_BASE}12.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="vertical-list"
+                items={[<>beautiful － more beautiful</>, <>popular － more popular</>, <>exciting － more exciting</>]}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-013',
+        durationInFrames: 63,
+        audioSrc: staticFile(`${AUDIO_BASE}13.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="vertical-list"
+                items={[<>beautiful － <RedText>more</RedText> beautiful</>, <>popular － <RedText>more</RedText> popular</>, <>exciting － <RedText>more</RedText> exciting</>]} />
+        ),
+        pauseAfter: 15,
+    },
+    // {
+    //     id: 'scene-3-014',
+    //     durationInFrames: 99,
+    //     audioSrc: staticFile(`${AUDIO_BASE}14.wav`),
+    //     boardContent: () => (
+    //         <EnglishLessonBoard
+    //             step="title"
+    //             layout="standard"
+    //             japaneseText={<><RedText>より</RedText>面白い</>}
+    //             englishText={<><RedText>more</RedText> interesting</>}
+    //         />
+    //     ),
+    //     pauseAfter: 15,
+    // },
+    // {
+    //     id: 'scene-3-015',
+    //     durationInFrames: 57,
+    //     audioSrc: staticFile(`${AUDIO_BASE}15.wav`),
+    //     boardContent: () => (
+    //         <EnglishLessonBoard
+    //             step="title"
+    //             layout="standard"
+    //             japaneseText={<><RedText>より</RedText>面白い</>}
+    //             englishText={<><RedText>more</RedText> interesting</>}
+    //         />
+    //     ),
+    //     pauseAfter: 15,
+    // },
+    // {
+    //     id: 'scene-3-016',
+    //     durationInFrames: 49,
+    //     audioSrc: staticFile(`${AUDIO_BASE}16.wav`),
+    //     boardContent: () => (
+    //         <EnglishLessonBoard
+    //             step="title"
+    //             layout="standard"
+    //             japaneseText={<><RedText>より</RedText>面白い</>}
+    //             englishText={<><RedText>more</RedText> interesting</>}
+    //         />
+    //     ),
+    //     pauseAfter: 15,
+    // },
+    {
+        id: 'scene-3-017',
+        durationInFrames: 130,
+        audioSrc: staticFile(`${AUDIO_BASE}17.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                imageSrc={staticFile('images/quiz_intro.png')}
+                japaneseText={<span style={{ fontSize: '55px' }}>この本はあの本より面白いです。</span>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-3-018',
+        durationInFrames: 133,
+        audioSrc: staticFile(`${AUDIO_BASE}18.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                imageSrc={staticFile('images/quiz_intro.png')}
+                speechBubble=""
+                japaneseText={<span style={{ fontSize: '55px' }}>この本はあの本より面白いです。</span>}
+                englishText={<>This book is <RedText>more</RedText> <RedText>interesting</RedText> than that book.</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+];

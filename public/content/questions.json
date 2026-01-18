@@ -1,0 +1,204 @@
+{
+  "questions": [
+    {
+      "id": "q001",
+      "questionText": "14世紀イタリアに始まる文芸復興は？",
+      "correctAnswer": "ルネサンス",
+      "wrongAnswers": ["産業革命", "啓蒙思想", "宗教改革"],
+      "explanation": "人間中心の価値観を重視し、古代ギリシャ・ローマの文化を手がかりに発展した。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q002",
+      "questionText": "聖書を信仰の拠り所とする教会の改革は？",
+      "correctAnswer": "宗教改革",
+      "wrongAnswers": ["ルネサンス", "市民革命", "産業革命"],
+      "explanation": "16世紀にルターやカルバンが始め、ローマ教皇の権威を批判した運動。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q003",
+      "questionText": "免罪符の販売を批判し宗教改革を始めたのは？",
+      "correctAnswer": "ルター",
+      "wrongAnswers": ["カルバン", "ザビエル", "ガリレイ"],
+      "explanation": "ドイツの神学者で、人は信仰によってのみ救われると説き聖書を重視した。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q004",
+      "questionText": "宗教改革から生まれた新教徒の呼び名は？",
+      "correctAnswer": "プロテスタント",
+      "wrongAnswers": ["カトリック", "イエズス会", "正教会"],
+      "explanation": "「抗議する者」を意味し、カトリック教会の組織や指導に反対した勢力。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q005",
+      "questionText": "プロテスタントに対抗したカトリックの組織は？",
+      "correctAnswer": "イエズス会",
+      "wrongAnswers": ["東インド会社", "ハンザ同盟", "テンプル騎士団"],
+      "explanation": "ザビエルらが所属し、アジアやアメリカ大陸への布教を積極的に行った。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q006",
+      "questionText": "欧州人が新航路を開拓し世界へ進出した時代は？",
+      "correctAnswer": "大航海時代",
+      "wrongAnswers": ["中世", "近代", "帝国主義時代"],
+      "explanation": "15世紀から始まり、ポルトガルとスペインが先がけとなって拡大した。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q007",
+      "questionText": "1492年にカリブ海の島に到達した航海者は？",
+      "correctAnswer": "コロンブス",
+      "wrongAnswers": ["マゼラン", "バスコ・ダ・ガマ", "エンリケ航海王子"],
+      "explanation": "スペインの支援で大西洋を横断し、アメリカ大陸発見のきっかけを作った。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q008",
+      "questionText": "1498年にインド航路を発見した人物は？",
+      "correctAnswer": "バスコ・ダ・ガマ",
+      "wrongAnswers": ["コロンブス", "マゼラン", "アメリゴ・ベスプッチ"],
+      "explanation": "アフリカ南端の喜望峰を回り、欧州とインドを海路で直接つなげた。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q009",
+      "questionText": "1522年に初めて世界一周を達成した船隊は？",
+      "correctAnswer": "マゼラン",
+      "wrongAnswers": ["コロンブス", "バスコ・ダ・ガマ", "ドレーク"],
+      "explanation": "本人はフィリピンで戦死したが、部下が地球が丸いことを実証した。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q010",
+      "questionText": "欧州・アフリカ・アメリカを結んだ貿易は？",
+      "correctAnswer": "三角貿易",
+      "wrongAnswers": ["南蛮貿易", "朱印船貿易", "シルクロード貿易"],
+      "explanation": "奴隷や銀、砂糖などが取引され、欧州に莫大な富をもたらした。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q011",
+      "questionText": "大航海時代に欧州人がアジアで求めた品は？",
+      "correctAnswer": "香辛料",
+      "wrongAnswers": ["絹織物", "陶磁器", "茶"],
+      "explanation": "こしょうやナツメグなど、調味料や薬として金と同等の価値があった。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q012",
+      "questionText": "16世紀末に独立しアジア貿易で栄えた国は？",
+      "correctAnswer": "オランダ",
+      "wrongAnswers": ["イギリス", "フランス", "スペイン"],
+      "explanation": "東インド会社を設立し、欧州の商業や金融の中心地として繁栄した。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q013",
+      "questionText": "オランダがアジア進出の拠点とした組織は？",
+      "correctAnswer": "東インド会社",
+      "wrongAnswers": ["西インド会社", "ハンザ同盟", "イエズス会"],
+      "explanation": "ジャカルタを本拠地とし、日本を含むアジア全域で貿易を独占した。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q014",
+      "questionText": "南米に栄えた太陽神を信仰する古代帝国は？",
+      "correctAnswer": "インカ帝国",
+      "wrongAnswers": ["アステカ帝国", "マヤ文明", "オルメカ文明"],
+      "explanation": "高度な石造建築技術を持っていたが、スペインの侵略により滅亡した。",
+      "videoId": "v002"
+    },
+    {
+      "id": "q015",
+      "questionText": "ルネサンス期に「モナ・リザ」を描いたのは？",
+      "correctAnswer": "レオナルド・ダ・ビンチ",
+      "wrongAnswers": ["ミケランジェロ", "ラファエロ", "ボッティチェリ"],
+      "explanation": "「万能の天才」と呼ばれ、解剖学や科学など多方面で足跡を残した。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q016",
+      "questionText": "高さ5mを超えるダビデ像を制作した彫刻家は？",
+      "correctAnswer": "ミケランジェロ",
+      "wrongAnswers": ["レオナルド・ダ・ビンチ", "ラファエロ", "ドナテッロ"],
+      "explanation": "人間らしい力強さを表現した彫刻や、教会の天井画で知られる巨匠。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q017",
+      "questionText": "望遠鏡で天体を観測し地動説を唱えたのは？",
+      "correctAnswer": "ガリレイ",
+      "wrongAnswers": ["コペルニクス", "ニュートン", "ケプラー"],
+      "explanation": "自然への探究を重視し、17世紀の科学革命において重要な役割を果たした。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q018",
+      "questionText": "万有引力の法則を解明した英の科学者は？",
+      "correctAnswer": "ニュートン",
+      "wrongAnswers": ["ガリレイ", "アインシュタイン", "ダーウィン"],
+      "explanation": "天体や物質の運動法則を解明し、欧州の科学を世界最高水準に導いた。",
+      "videoId": "v001"
+    },
+    {
+      "id": "q019",
+      "questionText": "1549年に日本にキリスト教を伝えた人物は？",
+      "correctAnswer": "フランシスコ・ザビエル",
+      "wrongAnswers": ["ルイス・フロイス", "ルター", "カルバン"],
+      "explanation": "イエズス会の宣教師で、鹿児島に上陸しキリスト教の布教活動を開始した。",
+      "videoId": "v003"
+    },
+    {
+      "id": "q020",
+      "questionText": "スペイン・ポルトガルとの貿易を何というか？",
+      "correctAnswer": "南蛮貿易",
+      "wrongAnswers": ["朱印船貿易", "勘合貿易", "日明貿易"],
+      "explanation": "銃や生糸などを輸入し、銀や刀などを輸出する貿易が盛んになった。",
+      "videoId": "v003"
+    },
+    {
+      "id": "q021",
+      "questionText": "南蛮貿易で日本に伝わった新兵器は？",
+      "correctAnswer": "鉄砲",
+      "wrongAnswers": ["大砲", "火薬", "刀"],
+      "explanation": "1543年に種子島に伝来し、戦国時代の戦い方を大きく変えた。",
+      "videoId": "v003"
+    },
+    {
+      "id": "q022",
+      "questionText": "楽市楽座を実施し商業を振興した戦国大名は？",
+      "correctAnswer": "織田信長",
+      "wrongAnswers": ["豊臣秀吉", "徳川家康", "武田信玄"],
+      "explanation": "関所を廃止し、座の特権を否定して自由な商業活動を奨励した。",
+      "videoId": "v005"
+    },
+    {
+      "id": "q023",
+      "questionText": "1573年に室町幕府を滅ぼした人物は？",
+      "correctAnswer": "織田信長",
+      "wrongAnswers": ["豊臣秀吉", "徳川家康", "今川義元"],
+      "explanation": "足利義昭を京都から追放し、約240年続いた室町幕府を終わらせた。",
+      "videoId": "v005"
+    },
+    {
+      "id": "q024",
+      "questionText": "刀狩令を出して農民から武器を没収したのは？",
+      "correctAnswer": "豊臣秀吉",
+      "wrongAnswers": ["織田信長", "徳川家康", "徳川綱吉"],
+      "explanation": "一揆を防ぐために農民から刀や槍を取り上げ、兵農分離を進めた。",
+      "videoId": "v006"
+    },
+    {
+      "id": "q025",
+      "questionText": "検地を行い全国の土地を調査したのは？",
+      "correctAnswer": "豊臣秀吉",
+      "wrongAnswers": ["織田信長", "徳川家康", "北条早雲"],
+      "explanation": "統一した基準で土地を測量し、年貢の取り立ての基準を明確にした。",
+      "videoId": "v006"
+    }
+  ]
+}

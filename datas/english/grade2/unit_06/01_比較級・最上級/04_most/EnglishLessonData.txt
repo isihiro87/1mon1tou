@@ -1,0 +1,272 @@
+import { staticFile } from 'remotion';
+import { QuizBoard, EnglishLessonBoard, RedText, FormulaContainer, FormulaItem, FormulaText, CenteredList, RedCross } from './components/english';
+import { Scene } from './data';
+
+export type { Scene };
+
+const AUDIO_BASE = 'audio/explain/04_most_part';
+// const TOPIC = '01_比較級・最上級';
+
+export const englishLessonData: Scene[] = [
+    {
+        id: 'scene-4-001',
+        durationInFrames: 17,
+        audioSrc: staticFile(`${AUDIO_BASE}001.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                imageSrc={staticFile('images/quiz_intro.png')}
+                speechBubble="さあ、解けるかな？"
+                japaneseText={<><span style={{ fontSize: '50px' }}>この映画は日本で一番人気があります。</span></>}
+                englishText={<>This movie is (　) (　) (　) in Japan.</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-002',
+        durationInFrames: 72,
+        audioSrc: staticFile(`${AUDIO_BASE}002.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                imageSrc={staticFile('images/quiz_intro.png')}
+                speechBubble="さあ、解けるかな？"
+                japaneseText={<><span style={{ fontSize: '50px' }}>この映画は日本で一番人気があります。</span></>}
+                englishText={<>This movie is (　) (　) (　) in Japan.</>}
+            />
+        ),
+        pauseAfter: 50,
+    },
+    {
+        id: 'scene-4-003',
+        durationInFrames: 111,
+        audioSrc: staticFile(`${AUDIO_BASE}003.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>人気がある</>}
+                englishText={<>popular</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-004',
+        durationInFrames: 117,
+        audioSrc: staticFile(`${AUDIO_BASE}004.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>一番人気がある</>}
+                englishText={<>popular - est？</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-005',
+        durationInFrames: 90,
+        audioSrc: staticFile(`${AUDIO_BASE}005.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>一番人気がある</>}
+                englishText={<>popular - est？</>}
+                speechBubble="長い！"
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-006',
+        durationInFrames: 71,
+        audioSrc: staticFile(`${AUDIO_BASE}006.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                speechBubble=""
+                japaneseText={<>一番人気がある</>}
+                englishText={<>popular - <RedCross>est</RedCross>？</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-007',
+        durationInFrames: 23,
+        audioSrc: staticFile(`${AUDIO_BASE}007.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>一番人気がある</>}
+                englishText={<>popular - <RedCross>est</RedCross>？</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-008',
+        durationInFrames: 92,
+        audioSrc: staticFile(`${AUDIO_BASE}008.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="vertical-split"
+                speechBubble="mostを使うよ。"
+                topContent={<><RedText>×</RedText> popularest</>}
+                bottomContent={<><RedText>〇</RedText> most popular</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-009',
+        durationInFrames: 38,
+        audioSrc: staticFile(`${AUDIO_BASE}009.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<> </>}
+                speechBubble="ポイント!"
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-010',
+        durationInFrames: 55,
+        audioSrc: staticFile(`${AUDIO_BASE}010.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>一番 <RedText>⇒</RedText></>}
+                speechBubble="ポイント!"
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-011',
+        durationInFrames: 66,
+        audioSrc: staticFile(`${AUDIO_BASE}011.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>一番 <RedText>⇒</RedText></>}
+                speechBubble="ポイント!"
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-012',
+        durationInFrames: 65,
+        audioSrc: staticFile(`${AUDIO_BASE}012.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>一番 <RedText>⇒</RedText> １つに決まる</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-013',
+        durationInFrames: 18,
+        audioSrc: staticFile(`${AUDIO_BASE}013.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>一番 <RedText>⇒</RedText> １つに決まる</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-014',
+        durationInFrames: 59,
+        audioSrc: staticFile(`${AUDIO_BASE}014.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                japaneseText={<>一番 <RedText>⇒</RedText> １つに決まる</>}
+                englishText={<><RedText>the</RedText> most popular</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-015',
+        durationInFrames: 54,
+        audioSrc: staticFile(`${AUDIO_BASE}015.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                speechBubble="theを忘れないで！"
+                japaneseText={<>一番 <RedText>⇒</RedText> １つに決まる</>}
+                englishText={<><RedText>the</RedText> most popular</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-016',
+        durationInFrames: 133,
+        audioSrc: staticFile(`${AUDIO_BASE}016.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                speechBubble=""
+                japaneseText={<>一番 <RedText>⇒</RedText> １つに決まる</>}
+                englishText={<><RedText>the most</RedText> popular</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-017',
+        durationInFrames: 120,
+        audioSrc: staticFile(`${AUDIO_BASE}017.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                imageSrc={staticFile('images/quiz_intro.png')}
+                japaneseText={<>この映画は日本で一番人気があります。</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+    {
+        id: 'scene-4-018',
+        durationInFrames: 159,
+        audioSrc: staticFile(`${AUDIO_BASE}018.wav`),
+        boardContent: () => (
+            <EnglishLessonBoard
+                step="title"
+                layout="standard"
+                imageSrc={staticFile('images/quiz_intro.png')}
+                speechBubble=""
+                japaneseText={<>この映画は日本で一番人気があります。</>}
+                englishText={<>This movie is <RedText>the most popular</RedText> in Japan.</>}
+            />
+        ),
+        pauseAfter: 15,
+    },
+];

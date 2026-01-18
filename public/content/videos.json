@@ -1,0 +1,151 @@
+{
+  "videos": [
+    {
+      "id": "v001",
+      "title": "ヨーロッパの変化（ルネサンス・宗教改革）",
+      "url": "/datas/history/4-1/1europe_change/IchimonIttoShorts.mp4",
+      "chapter": "4-1",
+      "topic": "ヨーロッパの変化"
+    },
+    {
+      "id": "v002",
+      "title": "ヨーロッパの拡大",
+      "url": "/datas/history/4-1/2europe_spread/ヨーロッパの拡大.mp4",
+      "chapter": "4-1",
+      "topic": "ヨーロッパの拡大"
+    },
+    {
+      "id": "v003",
+      "title": "南蛮貿易①",
+      "url": "/datas/history/4-1/3nanban_trade/03-output.mp4",
+      "chapter": "4-1",
+      "topic": "南蛮貿易"
+    },
+    {
+      "id": "v004",
+      "title": "南蛮貿易②",
+      "url": "/datas/history/4-1/3nanban_trade/04-output.mp4",
+      "chapter": "4-1",
+      "topic": "南蛮貿易"
+    },
+    {
+      "id": "v005",
+      "title": "織田信長・豊臣秀吉①",
+      "url": "/datas/history/4-1/4nobunaga_hideyoshi/04-01-output.mp4",
+      "chapter": "4-1",
+      "topic": "織田信長・豊臣秀吉"
+    },
+    {
+      "id": "v006",
+      "title": "織田信長・豊臣秀吉②",
+      "url": "/datas/history/4-1/4nobunaga_hideyoshi/04-02-output.mp4",
+      "chapter": "4-1",
+      "topic": "織田信長・豊臣秀吉"
+    },
+    {
+      "id": "v007",
+      "title": "イギリス革命",
+      "url": "/datas/history/5-1/2british/IchimonIttoShorts.mp4",
+      "chapter": "5-1",
+      "topic": "イギリス革命"
+    },
+    {
+      "id": "v008",
+      "title": "欧米諸国のアジア進出",
+      "url": "/datas/history/5-1/5/IchimonIttoShorts.mp4",
+      "chapter": "5-1",
+      "topic": "欧米諸国のアジア進出"
+    },
+    {
+      "id": "v009",
+      "title": "開国と幕末の動乱",
+      "url": "/datas/history/5-2/2bakumatsu/IchimonIttoShorts.mp4",
+      "chapter": "5-2",
+      "topic": "開国と幕末の動乱"
+    },
+    {
+      "id": "v010",
+      "title": "明治維新①",
+      "url": "/datas/history/5-3/1meijiishin/IchimonIttoShorts.mp4",
+      "chapter": "5-3",
+      "topic": "明治維新"
+    },
+    {
+      "id": "v011",
+      "title": "明治維新②",
+      "url": "/datas/history/5-3/2meijiishin2/IchimonIttoShorts.mp4",
+      "chapter": "5-3",
+      "topic": "明治維新"
+    },
+    {
+      "id": "v012",
+      "title": "明治維新③",
+      "url": "/datas/history/5-3/3meijiishin3/IchimonIttoShorts.mp4",
+      "chapter": "5-3",
+      "topic": "明治維新"
+    },
+    {
+      "id": "v013",
+      "title": "明治維新④",
+      "url": "/datas/history/5-3/4meijiishin4/IchimonIttoShorts.mp4",
+      "chapter": "5-3",
+      "topic": "明治維新"
+    },
+    {
+      "id": "v014",
+      "title": "国境の確定",
+      "url": "/datas/history/5-3/5kokkyou/IchimonIttoShorts.mp4",
+      "chapter": "5-3",
+      "topic": "国境の確定"
+    },
+    {
+      "id": "v015",
+      "title": "自由民権運動",
+      "url": "/datas/history/5-3/6free-exercise/IchimonIttoShorts.mp4",
+      "chapter": "5-3",
+      "topic": "自由民権運動"
+    },
+    {
+      "id": "v016",
+      "title": "条約改正",
+      "url": "/datas/history/5-4/1jouyakukaisei/IchimonIttoShorts.mp4",
+      "chapter": "5-4",
+      "topic": "条約改正"
+    },
+    {
+      "id": "v017",
+      "title": "日清戦争",
+      "url": "/datas/history/5-4/2nisshinsensu/IchimonIttoShorts.mp4",
+      "chapter": "5-4",
+      "topic": "日清戦争"
+    },
+    {
+      "id": "v018",
+      "title": "日露戦争",
+      "url": "/datas/history/5-4/3nichirosenso/IchimonIttoShorts.mp4",
+      "chapter": "5-4",
+      "topic": "日露戦争"
+    },
+    {
+      "id": "v019",
+      "title": "中国・朝鮮",
+      "url": "/datas/history/5-4/4china_korea/IchimonIttoShorts.mp4",
+      "chapter": "5-4",
+      "topic": "中国・朝鮮"
+    },
+    {
+      "id": "v020",
+      "title": "日本の産業革命",
+      "url": "/datas/history/5-4/5japan_indust/IchimonIttoShorts.mp4",
+      "chapter": "5-4",
+      "topic": "日本の産業革命"
+    },
+    {
+      "id": "v021",
+      "title": "明治の文化",
+      "url": "/datas/history/5-4/6culture/IchimonIttoShorts.mp4",
+      "chapter": "5-4",
+      "topic": "明治の文化"
+    }
+  ]
+}

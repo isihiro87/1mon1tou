@@ -1,0 +1,65 @@
+import { SubjectTheme } from './components/rhythm/IchimonIttoBoard';
+
+export interface IchimonIttoScene {
+    id: string;
+    question: string;
+    answer: string;
+    description?: string; // Optional explanation
+    questionAudio: string;
+    questionDuration: number;
+    answerAudio: string;
+    answerDuration: number;
+}
+
+export const ichimonIttoData: IchimonIttoScene[] = [
+    {
+        id: 'q1',
+        question: '1840年にイギリスと清の間\nで起きた戦争は？',
+        answer: 'アヘン戦争',
+        description: '南京条約を結び\n香港を得た。',
+        questionAudio: 'audio/explain/00-ahen.wav',
+        questionDuration: 113, // 3.768s
+        answerAudio: 'audio/explain/01-ahen.wav',
+        answerDuration: 39, // 1.2986666666666666s
+    },
+    {
+        id: 'q2',
+        question: 'アヘン戦争後に清国内で\n起きた反乱は何？',
+        answer: '太平天国の乱',
+        description: '重税や社会不安から\n起きた。',
+        questionAudio: 'audio/explain/02-ahen.wav',
+        questionDuration: 94, // 3.1333333333333333s
+        answerAudio: 'audio/explain/03-ahen.wav',
+        answerDuration: 48, // 1.5946666666666667s
+    },
+    {
+        id: 'q3',
+        question: 'ドイツ統一を指導した\n「鉄血宰相」は？',
+        answer: 'ビスマルク',
+        description: '富国強兵で\nドイツ帝国を築く。',
+        questionAudio: 'audio/explain/04-ahen.wav',
+        questionDuration: 95, // 3.16s
+        answerAudio: 'audio/explain/05-ahen.wav',
+        answerDuration: 38, // 1.2693333333333334s
+    },
+    {
+        id: 'q4',
+        question: '南北戦争を指導した\nアメリカの大統領は誰？',
+        answer: 'リンカン',
+        description: '北部を勝利へ導き\n奴隷を解放。',
+        questionAudio: 'audio/explain/06-ahen.wav',
+        questionDuration: 99, // 3.2986666666666666s
+        answerAudio: 'audio/explain/07-ahen.wav',
+        answerDuration: 30, // 0.9893333333333333s
+    },
+    {
+        id: 'q5',
+        question: '1857年にインド兵が\n起こした反乱は？',
+        answer: 'インド大反乱',
+        description: '鎮圧後に\nインド帝国が成立。',
+        questionAudio: 'audio/explain/08-ahen.wav',
+        questionDuration: 102, // 3.4133333333333336s
+        answerAudio: 'audio/explain/09-ahen.wav',
+        answerDuration: 41, // 1.3786666666666667s
+    },
+];

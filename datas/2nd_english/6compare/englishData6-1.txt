@@ -1,0 +1,245 @@
+import { staticFile } from 'remotion';
+import { QuizBoard, RhythmBoard, EnglishLessonBoard } from './components/english';
+import { Scene } from './data';
+
+export type { Scene };
+
+const AUDIO_BASE = 'audio/compare/long_explanation_part';
+
+const TOPIC = '比較級 (～より...)';
+
+export const englishLessonData: Scene[] = [
+    // 01: Quiz
+    {
+        id: 'scene1',
+        durationInFrames: 68,
+        audioSrc: staticFile(`${AUDIO_BASE}005.wav`),
+        boardContent: () => <QuizBoard step="question" japaneseText="トムはケンより背が高い" englishText="Tom is （　）（　） Ken." />,
+        overlayText: '',
+        characterComment: '',
+        role: 'question',
+    },
+    // 02: Tom is tall.
+    {
+        id: 'scene2',
+        durationInFrames: 60,
+        audioSrc: staticFile(`${AUDIO_BASE}006.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                "　",
+            ]}
+            explanation="「トムは背が高い」"
+            imageSrc={staticFile('images/tom_only.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 03: Tom is tall. (Repeat)
+    {
+        id: 'scene3',
+        durationInFrames: 65,
+        audioSrc: staticFile(`${AUDIO_BASE}007.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                "Tom is tall.",
+            ]}
+            explanation="「トムは背が高い」"
+            imageSrc={staticFile('images/tom_only.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 04: Focus on tall
+    {
+        id: 'scene4',
+        durationInFrames: 86,
+        audioSrc: staticFile(`${AUDIO_BASE}008.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                <span>Tom is <span style={{ color: '#E65100' }}>tall</span>.</span>,
+            ]}
+            explanation="is の後ろの tall に注目！"
+            imageSrc={staticFile('images/tom_only.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 05: tall -> taller
+    {
+        id: 'scene5',
+        durationInFrames: 56,
+        audioSrc: staticFile(`${AUDIO_BASE}009.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                <span>Tom is <span style={{ color: '#E65100' }}>tall</span>.</span>,
+            ]}
+            explanation={<span>tall + <span style={{ color: '#E91E63' }}>er</span></span>}
+            imageSrc={staticFile('images/tom_and_ken.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 06: taller meaning
+    {
+        id: 'scene6',
+        durationInFrames: 152,
+        audioSrc: staticFile(`${AUDIO_BASE}010.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                <span>Tom is <span style={{ color: '#E91E63' }}>taller</span>.</span>,
+            ]}
+            explanation="「より背が高い」に変身！"
+            imageSrc={staticFile('images/tom_and_ken.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 07: than Ken
+    {
+        id: 'scene7',
+        durationInFrames: 54,
+        audioSrc: staticFile(`${AUDIO_BASE}011.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                <span>Tom is <span style={{ color: '#E91E63' }}>taller</span>.</span>,
+            ]}
+            explanation="「ケンより」 = than Ken"
+            imageSrc={staticFile('images/tom_and_ken.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 08: than Ken (Repeat)
+    {
+        id: 'scene8',
+        durationInFrames: 31,
+        audioSrc: staticFile(`${AUDIO_BASE}012.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                <span>Tom is <span style={{ color: '#E91E63' }}>taller</span>.</span>,
+            ]}
+            explanation="「ケンより」 = than Ken"
+            imageSrc={staticFile('images/tom_and_ken.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 09: Full Sentence
+    {
+        id: 'scene9',
+        durationInFrames: 113,
+        audioSrc: staticFile(`${AUDIO_BASE}013.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                "　",
+            ]}
+            explanation="トムはケンより背が高い"
+            imageSrc={staticFile('images/tom_and_ken.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 10: Full Sentence (Read)
+    {
+        id: 'scene10',
+        durationInFrames: 77,
+        audioSrc: staticFile(`${AUDIO_BASE}014.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                <span style={{ color: '#E91E63' }}>Tom is taller than Ken.</span>,
+            ]}
+            explanation="トムはケンより背が高い"
+            imageSrc={staticFile('images/tom_and_ken.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 11: Conclusion
+    {
+        id: 'scene11',
+        durationInFrames: 23,
+        audioSrc: staticFile(`${AUDIO_BASE}015.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                <span style={{ color: '#E91E63' }}>Tom is taller than Ken.</span>,
+            ]}
+            explanation="トムはケンより背が高い"
+            imageSrc={staticFile('images/tom_and_ken.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 12: Rhythm 1
+    {
+        id: 'scene12',
+        durationInFrames: 59,
+        audioSrc: staticFile(`${AUDIO_BASE}016.wav`),
+        boardContent: () => <RhythmBoard count={1} sentence={<span>Tom is <span style={{ color: '#E91E63' }}>taller</span> than Ken.</span>} />,
+        overlayText: '',
+        characterComment: '',
+        role: 'rhythm',
+    },
+    // 13: Rhythm 2
+    {
+        id: 'scene13',
+        durationInFrames: 57,
+        audioSrc: staticFile(`${AUDIO_BASE}016.wav`),
+        boardContent: () => <RhythmBoard count={2} sentence={<span>Tom is <span style={{ color: '#E91E63' }}>taller</span> than Ken.</span>} />,
+        overlayText: '',
+        characterComment: '',
+        role: 'rhythm',
+    },
+    // 14: Master Rhythm
+    {
+        id: 'scene14',
+        durationInFrames: 71,
+        audioSrc: staticFile(`${AUDIO_BASE}019.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                "Tom is taller than Ken.",
+            ]}
+            explanation="リズムをマスターしよう！"
+            imageSrc={staticFile('images/tom_and_ken.png')}
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+    // 15: Check Comments
+    {
+        id: 'scene15',
+        durationInFrames: 93,
+        audioSrc: staticFile(`${AUDIO_BASE}020.wav`),
+        boardContent: () => <EnglishLessonBoard
+            topic={TOPIC}
+            sentences={[
+                "コメント欄をみてね！",
+            ]}
+            explanation="他の例文もチェック！"
+        />,
+        overlayText: '',
+        characterComment: '',
+        role: 'explanation',
+    },
+];

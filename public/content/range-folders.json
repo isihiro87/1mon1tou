@@ -1,0 +1,67 @@
+{
+  "folders": [
+    {
+      "id": "2-1/1human_origins",
+      "chapter": "2-1",
+      "topic": "1human_origins",
+      "displayName": "人類の起源",
+      "videoUrl": "/datas/history/2-1/1human_origins/qas-output.mp4"
+    },
+    {
+      "id": "2-1/2ancient_civilizations",
+      "chapter": "2-1",
+      "topic": "2ancient_civilizations",
+      "displayName": "古代文明",
+      "videoUrl": "/datas/history/2-1/2ancient_civilizations/qas-output.mp4"
+    },
+    {
+      "id": "2-1/3chinese_civilization",
+      "chapter": "2-1",
+      "topic": "3chinese_civilization",
+      "displayName": "中国文明",
+      "videoUrl": "/datas/history/2-1/3chinese_civilization/qas-output.mp4"
+    },
+    {
+      "id": "4-2/1edo_bakufu",
+      "chapter": "4-2",
+      "topic": "1edo_bakufu",
+      "displayName": "江戸幕府",
+      "videoUrl": "/datas/history/4-2/1edo_bakufu/qas-output.mp4"
+    },
+    {
+      "id": "4-2/2sakoku",
+      "chapter": "4-2",
+      "topic": "2sakoku",
+      "displayName": "鎖国",
+      "videoUrl": "/datas/history/4-2/2sakoku/qas-output.mp4"
+    },
+    {
+      "id": "6-1/1ww1",
+      "chapter": "6-1",
+      "topic": "1ww1",
+      "displayName": "第一次世界大戦",
+      "videoUrl": "/datas/history/6-1/1ww1/qas-output.mp4"
+    },
+    {
+      "id": "6-1/2russia_revolution",
+      "chapter": "6-1",
+      "topic": "2russia_revolution",
+      "displayName": "ロシア革命",
+      "videoUrl": "/datas/history/6-1/2russia_revolution/qas-output.mp4"
+    },
+    {
+      "id": "6-1/3versailles",
+      "chapter": "6-1",
+      "topic": "3versailles",
+      "displayName": "ベルサイユ条約",
+      "videoUrl": "/datas/history/6-1/3versailles/qas-output.mp4"
+    },
+    {
+      "id": "6-1/4asia_nationalism",
+      "chapter": "6-1",
+      "topic": "4asia_nationalism",
+      "displayName": "アジアの民族運動",
+      "videoUrl": "/datas/history/6-1/4asia_nationalism/qas-output.mp4"
+    }
+  ]
+}
