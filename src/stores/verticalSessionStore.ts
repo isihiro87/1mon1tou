@@ -32,7 +32,7 @@ interface VerticalSessionState {
   resumeSession: () => boolean;        // 前回セッションから再開
   markCurrentAsWeak: () => void;       // 復習ボタン押下時に呼ばれる
   unmarkCurrentAsWeak: () => void;     // 復習ボタン解除時に呼ばれる
-  goNext: () => void;
+  goNext: (hasWatchedEnough?: boolean) => void; // 50%以上視聴したかどうか
   goPrev: () => void;
   goToIndex: (index: number) => void;
   clearSession: () => void;
@@ -202,33 +202,38 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
     });
   },
 
-  goNext: () => {
-    // 次の動画へ進む（動画終了時に呼ばれる）
+  goNext: (hasWatchedEnough = true) => {
+    // 次の動画へ進む（動画終了時またはスワイプ時に呼ばれる）
+    // hasWatchedEnough: 50%以上視聴したかどうか（デフォルトはtrue: 動画終了時は常に完了扱い）
     const { videos, currentIndex, pendingReview, videosSinceReview, videoStatsMap } = get();
     const currentVideo = videos[currentIndex];
 
     if (!currentVideo) return;
 
-    // 学習ログに記録（視聴完了）
-    useLearningLogStore.getState().addRecord({
-      videoId: currentVideo.id,
-      displayName: currentVideo.displayName,
-      chapter: currentVideo.chapter,
-      topic: currentVideo.topic,
-      feedback: null,  // 復習ボタンを押していない場合はnull
-    });
-
-    // 統計を記録（viewCountを増加）
     const newVideoStatsMap = new Map(videoStatsMap);
-    const existingStats = newVideoStatsMap.get(currentVideo.id);
-    if (existingStats) {
-      existingStats.viewCount += 1;
-    } else {
-      newVideoStatsMap.set(currentVideo.id, {
+
+    // 50%以上視聴した場合のみ記録
+    if (hasWatchedEnough) {
+      // 学習ログに記録（視聴完了）
+      useLearningLogStore.getState().addRecord({
+        videoId: currentVideo.id,
         displayName: currentVideo.displayName,
-        viewCount: 1,
-        reviewCount: 0,
+        chapter: currentVideo.chapter,
+        topic: currentVideo.topic,
+        feedback: null,  // 復習ボタンを押していない場合はnull
       });
+
+      // 統計を記録（viewCountを増加）
+      const existingStats = newVideoStatsMap.get(currentVideo.id);
+      if (existingStats) {
+        existingStats.viewCount += 1;
+      } else {
+        newVideoStatsMap.set(currentVideo.id, {
+          displayName: currentVideo.displayName,
+          viewCount: 1,
+          reviewCount: 0,
+        });
+      }
     }
 
     const newVideos = [...videos];

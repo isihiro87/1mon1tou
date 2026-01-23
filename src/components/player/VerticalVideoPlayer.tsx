@@ -1,12 +1,14 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import type { VerticalVideo } from '../../types';
 import { ReviewButton } from './ReviewButton';
+import { useVideoWatchProgress } from '../../hooks/useVideoWatchProgress';
 
 interface VerticalVideoPlayerProps {
   video: VerticalVideo;
   onComplete: () => void;
   onReviewPress: () => void;
   isReviewPressed: boolean;
+  onWatchProgressChange?: (hasWatchedEnough: boolean) => void;
 }
 
 export function VerticalVideoPlayer({
@@ -14,8 +16,21 @@ export function VerticalVideoPlayer({
   onComplete,
   onReviewPress,
   isReviewPressed,
+  onWatchProgressChange,
 }: VerticalVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // 視聴進捗追跡
+  const { hasWatchedEnough } = useVideoWatchProgress({
+    videoRef,
+    threshold: 0.5,
+    videoId: video.id,
+  });
+
+  // 視聴進捗が変わったら親に通知
+  useEffect(() => {
+    onWatchProgressChange?.(hasWatchedEnough);
+  }, [hasWatchedEnough, onWatchProgressChange]);
 
   const handleEnded = useCallback(() => {
     onComplete();

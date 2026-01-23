@@ -1,6 +1,5 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSwipeable } from 'react-swipeable';
 import { VerticalVideoPlayer } from '../components/player/VerticalVideoPlayer';
 import { ReviewToast } from '../components/player/ReviewToast';
 import { SessionCompleteScreen } from '../components/player/SessionCompleteScreen';
@@ -11,12 +10,15 @@ import { useVerticalSessionStore } from '../stores/verticalSessionStore';
 import { usePlayerKeyboard } from '../hooks/usePlayerKeyboard';
 import { usePlayerWheel } from '../hooks/usePlayerWheel';
 import { useVideoPreload } from '../hooks/useVideoPreload';
-import { useSwipeAnimation } from '../hooks/useSwipeAnimation';
+import { useVerticalSwipe } from '../hooks/useVerticalSwipe';
 
 export function VerticalPlayerPage() {
   const navigate = useNavigate();
   const [reviewPressed, setReviewPressed] = useState(false);
   const [showToast, setShowToast] = useState(false);
+
+  // 視聴完了フラグを保持（スワイプ中も値を保持するため）
+  const hasWatchedEnoughRef = useRef(false);
 
   const {
     videos,
@@ -45,17 +47,20 @@ export function VerticalPlayerPage() {
   // 次の動画をプリロード
   useVideoPreload(videos, currentIndex);
 
-  // スワイプアニメーション
-  const { triggerAnimation, getAnimationClass } = useSwipeAnimation();
-
-  // currentIndexが変わったら復習ボタン状態をリセット
+  // currentIndexが変わったら復習ボタン状態と視聴進捗をリセット
   useEffect(() => {
     setReviewPressed(false);
+    hasWatchedEnoughRef.current = false;
   }, [currentIndex]);
 
-  // 動画完了時の処理（直接次の動画へ）
+  // 視聴進捗変更時のハンドラー
+  const handleWatchProgressChange = useCallback((watched: boolean) => {
+    hasWatchedEnoughRef.current = watched;
+  }, []);
+
+  // 動画完了時の処理（直接次の動画へ、視聴完了として扱う）
   const handleVideoComplete = useCallback(() => {
-    goNext();
+    goNext(true); // 動画が最後まで再生されたので視聴完了
   }, [goNext]);
 
   // 復習ボタン押下時の処理（トグル）
@@ -77,21 +82,36 @@ export function VerticalPlayerPage() {
     setShowToast(false);
   }, []);
 
-  // 次へ進むハンドラー（キーボード・ホイール・ボタン共通）
+  // 次へ進むハンドラー（スワイプ・キーボード・ホイール・ボタン共通）
   const handleNext = useCallback(() => {
-    goNext();
+    goNext(hasWatchedEnoughRef.current);
   }, [goNext]);
 
   // 前へ戻るハンドラー（キーボード・ホイール・ボタン共通）
   const handleGoPrev = useCallback(() => {
-    goPrev();
-  }, [goPrev]);
+    if (currentIndex > 0) {
+      goPrev();
+    }
+  }, [goPrev, currentIndex]);
 
   // ホームに戻る
   const handleGoHome = useCallback(() => {
     clearSession();
     navigate('/');
   }, [clearSession, navigate]);
+
+  // スワイプ操作
+  const canSwipeDown = currentIndex > 0;
+  const canSwipeUp = currentIndex < videos.length - 1;
+
+  const { swipeHandlers, translateY, isAnimating } = useVerticalSwipe({
+    onSwipeUp: handleNext,
+    onSwipeDown: handleGoPrev,
+    canSwipeUp,
+    canSwipeDown,
+    threshold: 0.3,
+    onSwipeLeft: handleGoHome,
+  });
 
   // キーボード操作
   usePlayerKeyboard({
@@ -106,26 +126,6 @@ export function VerticalPlayerPage() {
     onPrev: handleGoPrev,
     onNext: handleNext,
     disabled: false,
-  });
-
-  // スワイプ操作
-  const swipeHandlers = useSwipeable({
-    onSwipedUp: () => {
-      triggerAnimation('up');
-      handleNext();
-    },
-    onSwipedDown: () => {
-      triggerAnimation('down');
-      goPrev();
-    },
-    onSwipedLeft: () => {
-      triggerAnimation('left');
-      // 左スワイプでホームへ戻る
-      handleGoHome();
-    },
-    trackMouse: true,
-    trackTouch: true,
-    delta: 50,
   });
 
   // もう一度
@@ -169,6 +169,8 @@ export function VerticalPlayerPage() {
   }
 
   const currentVideo = getCurrentVideo();
+  const prevVideo = currentIndex > 0 ? videos[currentIndex - 1] : null;
+  const nextVideo = currentIndex < videos.length - 1 ? videos[currentIndex + 1] : null;
   const sessionComplete = isComplete();
 
   // 完了画面（全動画視聴後）
@@ -189,8 +191,13 @@ export function VerticalPlayerPage() {
     return null;
   }
 
+  // アニメーションスタイル
+  const transitionStyle = isAnimating
+    ? 'transition-transform duration-300 ease-out'
+    : '';
+
   return (
-    <div className="flex flex-col h-dvh bg-black">
+    <div className="flex flex-col h-dvh bg-black overflow-hidden">
       {/* 復習トースト */}
       <ReviewToast show={showToast} onHide={handleToastHide} />
 
@@ -230,14 +237,46 @@ export function VerticalPlayerPage() {
         </p>
       </div>
 
-      {/* 動画プレイヤー */}
-      <div {...swipeHandlers} className={`flex-1 min-h-0 ${getAnimationClass()}`}>
-        <VerticalVideoPlayer
-          video={currentVideo}
-          onComplete={handleVideoComplete}
-          onReviewPress={handleReviewPress}
-          isReviewPressed={reviewPressed}
-        />
+      {/* スワイプコンテナ */}
+      <div
+        {...swipeHandlers}
+        className={`flex-1 min-h-0 relative ${transitionStyle}`}
+        style={{ transform: `translateY(${translateY}px)` }}
+      >
+        {/* 前の動画プレビュー（上部） */}
+        {prevVideo && (
+          <div
+            className="absolute left-0 right-0 h-full bg-black"
+            style={{ top: '-100%' }}
+          >
+            <div className="h-full w-full flex items-center justify-center">
+              <div className="text-white/50 text-sm">{prevVideo.displayName}</div>
+            </div>
+          </div>
+        )}
+
+        {/* 現在の動画 */}
+        <div className="h-full w-full">
+          <VerticalVideoPlayer
+            video={currentVideo}
+            onComplete={handleVideoComplete}
+            onReviewPress={handleReviewPress}
+            isReviewPressed={reviewPressed}
+            onWatchProgressChange={handleWatchProgressChange}
+          />
+        </div>
+
+        {/* 次の動画プレビュー（下部） */}
+        {nextVideo && (
+          <div
+            className="absolute left-0 right-0 h-full bg-black"
+            style={{ top: '100%' }}
+          >
+            <div className="h-full w-full flex items-center justify-center">
+              <div className="text-white/50 text-sm">{nextVideo.displayName}</div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* PC向けナビゲーションボタン */}
