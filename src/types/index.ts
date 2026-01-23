@@ -5,6 +5,18 @@
 export type AnswerResult = 'correct' | 'incorrect';
 
 // ===========================
+// エンティティ: Subject（科目）
+// ===========================
+
+export interface Subject {
+  id: string;           // 科目ID（例: "history"）
+  name: string;         // 表示名（例: "歴史"）
+  icon: string;         // アイコン名（例: "book"）
+  enabled: boolean;     // 有効/無効
+  contentPath: string;  // コンテンツパス（例: "/datas/history"）
+}
+
+// ===========================
 // エンティティ: Video（動画）
 // ===========================
 
@@ -37,6 +49,7 @@ export interface UserSettings {
   videosPerSession: 3 | 5 | 10;
   autoNextVideo: boolean;
   autoNextQuiz: boolean;
+  autoPlayNextVideo: boolean;    // 動画終了後に自動で次の動画へ
 }
 
 // ===========================
@@ -71,15 +84,7 @@ export interface Session {
   startedAt: number;
 }
 
-// ===========================
-// デフォルト値
-// ===========================
-
-export const DEFAULT_SETTINGS: UserSettings = {
-  videosPerSession: 5,
-  autoNextVideo: true,
-  autoNextQuiz: true,
-};
+// デフォルト値は src/utils/constants.ts で定義
 
 // ===========================
 // コンテンツデータ形式（JSON）
@@ -97,7 +102,7 @@ export interface QuestionsData {
 // 範囲選択機能
 // ===========================
 
-export type OrderMode = 'sequential' | 'random';
+export type OrderMode = 'sequential' | 'random' | 'smart';
 
 export interface RangeFolder {
   id: string;           // 一意のID（例: "2-1/1human_origins"）

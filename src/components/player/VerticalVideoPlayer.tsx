@@ -1,20 +1,43 @@
 import { useRef, useCallback } from 'react';
 import type { VerticalVideo } from '../../types';
+import { ReviewButton } from './ReviewButton';
 
 interface VerticalVideoPlayerProps {
   video: VerticalVideo;
   onComplete: () => void;
+  onReviewPress: () => void;
+  isReviewPressed: boolean;
 }
 
-export function VerticalVideoPlayer({ video, onComplete }: VerticalVideoPlayerProps) {
+export function VerticalVideoPlayer({
+  video,
+  onComplete,
+  onReviewPress,
+  isReviewPressed,
+}: VerticalVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleEnded = useCallback(() => {
     onComplete();
   }, [onComplete]);
 
+  const handleTogglePlayback = useCallback(() => {
+    if (!videoRef.current) return;
+
+    if (videoRef.current.paused) {
+      videoRef.current.play().catch((error) => {
+        console.warn('Video play failed:', error);
+      });
+    } else {
+      videoRef.current.pause();
+    }
+  }, []);
+
   return (
-    <div className="h-full w-full bg-black flex items-center justify-center">
+    <div
+      className="h-full w-full bg-black flex items-center justify-center relative cursor-pointer"
+      onClick={handleTogglePlayback}
+    >
       <video
         key={video.id}
         ref={videoRef}
@@ -27,6 +50,11 @@ export function VerticalVideoPlayer({ video, onComplete }: VerticalVideoPlayerPr
       >
         お使いのブラウザは動画再生に対応していません。
       </video>
+
+      {/* 復習ボタン（左下に配置） */}
+      <div className="absolute bottom-20 left-4 z-20">
+        <ReviewButton onPress={onReviewPress} isPressed={isReviewPressed} />
+      </div>
     </div>
   );
 }

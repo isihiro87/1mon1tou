@@ -6,6 +6,7 @@ import { Button } from '../components/common/Button';
 import { ChapterGroup } from '../components/range/ChapterGroup';
 import { OrderModeSelector } from '../components/range/OrderModeSelector';
 import { useRangeStore } from '../stores/rangeStore';
+import { useLearningLogStore } from '../stores/learningLogStore';
 import { RangeContentService } from '../services/RangeContentService';
 
 export function RangeSelectPage() {
@@ -39,6 +40,18 @@ export function RangeSelectPage() {
   const sortedChapters = useMemo(() => {
     return Array.from(groupedFolders.keys()).sort();
   }, [groupedFolders]);
+
+  // 学習ログのrecordsを購読
+  const learningRecords = useLearningLogStore((state) => state.records);
+
+  // 学習済みフォルダIDを取得
+  const completedFolderIds = useMemo(() => {
+    const completedIds = new Set<string>();
+    learningRecords.forEach((r) => {
+      completedIds.add(r.videoId);
+    });
+    return completedIds;
+  }, [learningRecords]);
 
   const handleStartLearning = () => {
     if (selectedFolderIds.length === 0) {
@@ -118,6 +131,7 @@ export function RangeSelectPage() {
                 chapter={chapter}
                 folders={folders}
                 selectedFolderIds={selectedFolderIds}
+                completedFolderIds={completedFolderIds}
                 onToggle={toggleFolder}
                 onToggleChapter={toggleChapter}
               />

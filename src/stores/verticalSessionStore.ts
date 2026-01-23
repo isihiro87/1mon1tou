@@ -1,17 +1,16 @@
 import { create } from 'zustand';
-import type { VerticalVideo, FeedbackType, VideoSessionStats, SessionStatsData } from '../types';
+import type { VerticalVideo, VideoSessionStats, SessionStatsData } from '../types';
 import { RangeContentService } from '../services/RangeContentService';
+import { SessionPersistenceService } from '../services/SessionPersistenceService';
 import { useRangeStore } from './rangeStore';
+import { useLearningLogStore } from './learningLogStore';
+import { REVIEW_DELAY_VIDEOS } from '../utils/constants';
 
 // 動画IDごとの統計を管理するマップ型
 type VideoStatsMap = Map<string, {
   displayName: string;
   viewCount: number;
-  feedbackCounts: {
-    perfect: number;
-    unsure: number;
-    bad: number;
-  };
+  reviewCount: number;  // 復習ボタンが押された回数
 }>;
 
 interface VerticalSessionState {
@@ -22,9 +21,7 @@ interface VerticalSessionState {
   error: string | null;
 
   // 復習システム用状態
-  pendingReview: VerticalVideo | null; // 「ヤバい」で1動画後に挿入予定
-  secondRoundQueue: VerticalVideo[];   // 「少し心配」で2週目用
-  isSecondRound: boolean;              // 2週目かどうか
+  pendingReview: VerticalVideo | null; // 復習ボタン押下で1動画後に挿入予定
   videosSinceReview: number;           // pendingReview設定後に見た動画数
 
   // 統計用状態
@@ -32,7 +29,9 @@ interface VerticalSessionState {
 
   // アクション
   startSession: () => Promise<void>;
-  submitFeedback: (feedback: FeedbackType) => void;
+  resumeSession: () => boolean;        // 前回セッションから再開
+  markCurrentAsWeak: () => void;       // 復習ボタン押下時に呼ばれる
+  unmarkCurrentAsWeak: () => void;     // 復習ボタン解除時に呼ばれる
   goNext: () => void;
   goPrev: () => void;
   goToIndex: (index: number) => void;
@@ -52,8 +51,6 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   isLoading: false,
   error: null,
   pendingReview: null,
-  secondRoundQueue: [],
-  isSecondRound: false,
   videosSinceReview: 0,
   videoStatsMap: new Map(),
 
@@ -86,10 +83,17 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
         currentIndex: 0,
         isLoading: false,
         pendingReview: null,
-        secondRoundQueue: [],
-        isSecondRound: false,
         videosSinceReview: 0,
         videoStatsMap: new Map(),
+      });
+
+      // セッション永続化
+      SessionPersistenceService.saveSession({
+        videos,
+        currentIndex: 0,
+        selectedFolderIds,
+        orderMode,
+        savedAt: Date.now(),
       });
     } catch (err) {
       set({
@@ -99,97 +103,171 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
     }
   },
 
-  submitFeedback: (feedback: FeedbackType) => {
-    const { videos, currentIndex, pendingReview, secondRoundQueue, isSecondRound, videosSinceReview, videoStatsMap } = get();
+  resumeSession: () => {
+    // 前回セッションから再開
+    const persisted = SessionPersistenceService.loadSession();
+    if (!persisted) {
+      return false;
+    }
+
+    // rangeStoreを更新
+    const rangeStore = useRangeStore.getState();
+    rangeStore.setOrderMode(persisted.orderMode);
+
+    set({
+      videos: persisted.videos,
+      currentIndex: persisted.currentIndex,
+      isLoading: false,
+      error: null,
+      pendingReview: null,
+      videosSinceReview: 0,
+      videoStatsMap: new Map(),
+    });
+
+    return true;
+  },
+
+  markCurrentAsWeak: () => {
+    // 復習ボタンが押されたときに呼ばれる
+    // 現在の動画を「苦手」としてマークし、1動画後に再挿入予定にする
+    const { videos, currentIndex, pendingReview, videoStatsMap } = get();
     const currentVideo = videos[currentIndex];
 
     if (!currentVideo) return;
 
-    // 統計を記録
+    const newVideos = [...videos];
+
+    // 既にpendingReviewがある場合は先にキューに追加
+    // +2の理由: 現在の動画(currentIndex)→次の動画(+1)→既存pending(+2)の順で配置
+    // これにより、新しいpending（現在の動画）が既存pendingより先に再生される
+    if (pendingReview) {
+      newVideos.splice(currentIndex + 2, 0, pendingReview);
+    }
+
+    // 現在の動画をpendingReviewに設定
+    const newPendingReview = currentVideo;
+
+    // 統計を更新（reviewCountを増加）
     const newVideoStatsMap = new Map(videoStatsMap);
     const existingStats = newVideoStatsMap.get(currentVideo.id);
     if (existingStats) {
-      existingStats.viewCount += 1;
-      existingStats.feedbackCounts[feedback] += 1;
+      existingStats.reviewCount += 1;
     } else {
       newVideoStatsMap.set(currentVideo.id, {
         displayName: currentVideo.displayName,
-        viewCount: 1,
-        feedbackCounts: {
-          perfect: feedback === 'perfect' ? 1 : 0,
-          unsure: feedback === 'unsure' ? 1 : 0,
-          bad: feedback === 'bad' ? 1 : 0,
-        },
+        viewCount: 0,  // まだ視聴完了していない
+        reviewCount: 1,
       });
     }
 
-    let newVideos = [...videos];
-    let newPendingReview = pendingReview;
-    let newSecondRoundQueue = [...secondRoundQueue];
-    let newVideosSinceReview = videosSinceReview;
-    let newCurrentIndex = currentIndex;
-
-    // フィードバックに応じた処理
-    if (feedback === 'bad') {
-      // 「ヤバい」: 1動画後に再表示
-      // もし既にpendingReviewがあれば、それを先に処理
-      if (pendingReview) {
-        // 次の位置に挿入
-        newVideos.splice(currentIndex + 2, 0, pendingReview);
-      }
-      newPendingReview = currentVideo;
-      newVideosSinceReview = 0;
-    } else if (feedback === 'unsure') {
-      // 「少し心配」: 2週目キューに追加
-      newSecondRoundQueue = [...secondRoundQueue, currentVideo];
-    }
-    // 「ばっちり」: 何もしない
-
-    // pendingReviewがある場合、1動画経過したら挿入
-    if (newPendingReview && newVideosSinceReview >= 1 && feedback !== 'bad') {
-      // 現在位置の次に挿入
-      newVideos.splice(currentIndex + 1, 0, newPendingReview);
-      newPendingReview = null;
-      newVideosSinceReview = 0;
-    } else if (pendingReview && feedback !== 'bad') {
-      newVideosSinceReview = videosSinceReview + 1;
-    }
-
-    // 次の動画へ
-    newCurrentIndex = currentIndex + 1;
-
-    // 1週目が終了し、2週目キューがある場合
-    if (newCurrentIndex >= newVideos.length && newSecondRoundQueue.length > 0 && !isSecondRound) {
-      // 2週目を開始
-      newVideos = newSecondRoundQueue;
-      newSecondRoundQueue = [];
-      newCurrentIndex = 0;
-      set({
-        videos: newVideos,
-        currentIndex: newCurrentIndex,
-        pendingReview: newPendingReview,
-        secondRoundQueue: newSecondRoundQueue,
-        isSecondRound: true,
-        videosSinceReview: newVideosSinceReview,
-        videoStatsMap: newVideoStatsMap,
-      });
-      return;
-    }
+    // 学習ログに復習マークを記録
+    useLearningLogStore.getState().addRecord({
+      videoId: currentVideo.id,
+      displayName: currentVideo.displayName,
+      chapter: currentVideo.chapter,
+      topic: currentVideo.topic,
+      feedback: 'bad',  // 復習ボタン = 苦手判定
+    });
 
     set({
       videos: newVideos,
-      currentIndex: newCurrentIndex,
       pendingReview: newPendingReview,
-      secondRoundQueue: newSecondRoundQueue,
-      videosSinceReview: newVideosSinceReview,
+      videosSinceReview: 0,
+      videoStatsMap: newVideoStatsMap,
+    });
+  },
+
+  unmarkCurrentAsWeak: () => {
+    // 復習ボタンが解除されたときに呼ばれる
+    // pendingReviewをクリアする
+    const { videos, currentIndex, pendingReview, videoStatsMap } = get();
+    const currentVideo = videos[currentIndex];
+
+    if (!currentVideo || !pendingReview) return;
+
+    // 現在の動画がpendingReviewと一致する場合のみ解除
+    if (pendingReview.id !== currentVideo.id) return;
+
+    // 統計を更新（reviewCountを減少）
+    const newVideoStatsMap = new Map(videoStatsMap);
+    const existingStats = newVideoStatsMap.get(currentVideo.id);
+    if (existingStats && existingStats.reviewCount > 0) {
+      existingStats.reviewCount -= 1;
+    }
+
+    set({
+      pendingReview: null,
+      videosSinceReview: 0,
       videoStatsMap: newVideoStatsMap,
     });
   },
 
   goNext: () => {
-    const { videos, currentIndex } = get();
-    if (currentIndex < videos.length) {
-      set({ currentIndex: currentIndex + 1 });
+    // 次の動画へ進む（動画終了時に呼ばれる）
+    const { videos, currentIndex, pendingReview, videosSinceReview, videoStatsMap } = get();
+    const currentVideo = videos[currentIndex];
+
+    if (!currentVideo) return;
+
+    // 学習ログに記録（視聴完了）
+    useLearningLogStore.getState().addRecord({
+      videoId: currentVideo.id,
+      displayName: currentVideo.displayName,
+      chapter: currentVideo.chapter,
+      topic: currentVideo.topic,
+      feedback: null,  // 復習ボタンを押していない場合はnull
+    });
+
+    // 統計を記録（viewCountを増加）
+    const newVideoStatsMap = new Map(videoStatsMap);
+    const existingStats = newVideoStatsMap.get(currentVideo.id);
+    if (existingStats) {
+      existingStats.viewCount += 1;
+    } else {
+      newVideoStatsMap.set(currentVideo.id, {
+        displayName: currentVideo.displayName,
+        viewCount: 1,
+        reviewCount: 0,
+      });
+    }
+
+    const newVideos = [...videos];
+    let newPendingReview = pendingReview;
+    let newVideosSinceReview = videosSinceReview;
+
+    // pendingReviewがある場合、指定本数経過したら挿入
+    if (pendingReview && videosSinceReview >= REVIEW_DELAY_VIDEOS) {
+      // 現在位置の次に挿入
+      newVideos.splice(currentIndex + 1, 0, pendingReview);
+      newPendingReview = null;
+      newVideosSinceReview = 0;
+    } else if (pendingReview) {
+      newVideosSinceReview = videosSinceReview + 1;
+    }
+
+    const newIndex = currentIndex + 1;
+
+    // 次の動画へ
+    set({
+      videos: newVideos,
+      currentIndex: newIndex,
+      pendingReview: newPendingReview,
+      videosSinceReview: newVideosSinceReview,
+      videoStatsMap: newVideoStatsMap,
+    });
+
+    // セッション永続化（完了時はクリア）
+    if (newIndex >= newVideos.length) {
+      SessionPersistenceService.clearSession();
+    } else {
+      const { selectedFolderIds, orderMode } = useRangeStore.getState();
+      SessionPersistenceService.saveSession({
+        videos: newVideos,
+        currentIndex: newIndex,
+        selectedFolderIds,
+        orderMode,
+        savedAt: Date.now(),
+      });
     }
   },
 
@@ -214,11 +292,10 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       isLoading: false,
       error: null,
       pendingReview: null,
-      secondRoundQueue: [],
-      isSecondRound: false,
       videosSinceReview: 0,
       videoStatsMap: new Map(),
     });
+    SessionPersistenceService.clearSession();
   },
 
   getCurrentVideo: () => {
@@ -227,9 +304,8 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   },
 
   isComplete: () => {
-    const { videos, currentIndex, secondRoundQueue, isSecondRound } = get();
-    // 現在の動画リストを全て見終わり、2週目キューもない場合に完了
-    return currentIndex >= videos.length && (isSecondRound || secondRoundQueue.length === 0);
+    const { videos, currentIndex } = get();
+    return currentIndex >= videos.length;
   },
 
   getTotalCount: () => {
@@ -259,13 +335,15 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
         videoId,
         displayName: stats.displayName,
         viewCount: stats.viewCount,
-        feedbackCounts: { ...stats.feedbackCounts },
+        feedbackCounts: {
+          perfect: 0,
+          unsure: 0,
+          bad: stats.reviewCount,  // 復習ボタン押下回数をbadとしてカウント
+        },
       });
 
       totalViews += stats.viewCount;
-      totalFeedbacks.perfect += stats.feedbackCounts.perfect;
-      totalFeedbacks.unsure += stats.feedbackCounts.unsure;
-      totalFeedbacks.bad += stats.feedbackCounts.bad;
+      totalFeedbacks.bad += stats.reviewCount;
     });
 
     return {

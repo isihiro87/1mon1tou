@@ -35,7 +35,24 @@ export function OrderModeSelector({ orderMode, onSelect }: OrderModeSelectorProp
         >
           ランダム
         </button>
+        <button
+          type="button"
+          onClick={() => onSelect('smart')}
+          className={clsx(
+            'flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors',
+            orderMode === 'smart'
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          )}
+        >
+          スマート
+        </button>
       </div>
+      {orderMode === 'smart' && (
+        <p className="text-xs text-gray-500 mt-1">
+          苦手な動画と長期間見ていない動画を優先して出題します
+        </p>
+      )}
     </div>
   );
 }

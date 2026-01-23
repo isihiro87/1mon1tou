@@ -1,5 +1,7 @@
 import type { RangeFolder, RangeFoldersData, VerticalVideo, OrderMode } from '../types';
 import { ContentLoadError } from '../utils/errors';
+import { WeakVideoService } from './WeakVideoService';
+import { useLearningLogStore } from '../stores/learningLogStore';
 
 const RANGE_FOLDERS_PATH = '/content/range-folders.json';
 
@@ -50,6 +52,12 @@ export class RangeContentService {
     // 順番モードに応じてソートまたはシャッフル
     if (orderMode === 'random') {
       return this.shuffleVideos(videos);
+    }
+
+    if (orderMode === 'smart') {
+      // スマート順: 苦手優先 + 間隔反復
+      const records = useLearningLogStore.getState().records;
+      return WeakVideoService.sortBySmartOrder(videos, records);
     }
 
     // sequential: フォルダID（章/トピック）でソート

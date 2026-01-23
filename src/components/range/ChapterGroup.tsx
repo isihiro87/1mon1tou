@@ -5,6 +5,7 @@ interface ChapterGroupProps {
   chapter: string;
   folders: RangeFolder[];
   selectedFolderIds: string[];
+  completedFolderIds: Set<string>; // 学習済みフォルダID
   onToggle: (folderId: string) => void;
   onToggleChapter: (chapter: string) => void;
 }
@@ -23,12 +24,17 @@ export function ChapterGroup({
   chapter,
   folders,
   selectedFolderIds,
+  completedFolderIds,
   onToggle,
   onToggleChapter,
 }: ChapterGroupProps) {
   const selectedCount = folders.filter(f => selectedFolderIds.includes(f.id)).length;
   const isAllSelected = selectedCount === folders.length;
   const isPartiallySelected = selectedCount > 0 && selectedCount < folders.length;
+
+  // 完了率を計算
+  const completedCount = folders.filter(f => completedFolderIds.has(f.id)).length;
+  const completionRate = Math.round((completedCount / folders.length) * 100);
 
   const handleChapterClick = () => {
     onToggleChapter(chapter);
@@ -60,9 +66,23 @@ export function ChapterGroup({
           {isPartiallySelected && <div className="w-2 h-0.5 bg-blue-500 rounded" />}
         </div>
 
-        <h3 className="text-sm font-semibold text-gray-700 flex-1 text-left">
-          {getChapterDisplayName(chapter)}
-        </h3>
+        <div className="flex-1 text-left">
+          <h3 className="text-sm font-semibold text-gray-700">
+            {getChapterDisplayName(chapter)}
+          </h3>
+          {/* 完了率バー */}
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-green-500 transition-all duration-300"
+                style={{ width: `${completionRate}%` }}
+              />
+            </div>
+            <span className="text-xs text-gray-500 min-w-[3rem] text-right">
+              {completionRate}%
+            </span>
+          </div>
+        </div>
         <span
           className={`text-xs px-2 py-0.5 rounded-full ${
             isAllSelected

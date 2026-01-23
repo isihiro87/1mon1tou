@@ -17,6 +17,7 @@ interface RangeState {
   selectAll: () => void;
   deselectAll: () => void;
   setOrderMode: (mode: OrderMode) => void;
+  setSelectedFolderIds: (ids: string[]) => void;
   getSelectedFolders: () => RangeFolder[];
 }
 
@@ -95,6 +96,10 @@ export const useRangeStore = create<RangeState>((set, get) => ({
 
   setOrderMode: (mode: OrderMode) => {
     set({ orderMode: mode });
+  },
+
+  setSelectedFolderIds: (ids: string[]) => {
+    set({ selectedFolderIds: ids });
   },
 
   getSelectedFolders: () => {
