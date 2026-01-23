@@ -27,6 +27,7 @@ export function VerticalPlayerPage() {
     error,
     pendingReview,
     startSession,
+    resumeSession,
     markCurrentAsWeak,
     unmarkCurrentAsWeak,
     goNext,
@@ -37,12 +38,17 @@ export function VerticalPlayerPage() {
     getSessionStats,
   } = useVerticalSessionStore();
 
-  // セッション開始
+  // セッション復元（ページ再読み込み時に永続化されたセッションから復元）
   useEffect(() => {
     if (videos.length === 0 && !isLoading) {
-      startSession();
+      // 永続化セッションからの復元を試行
+      const resumed = resumeSession();
+      if (!resumed) {
+        // 復元失敗（セッションなし）→ホームにリダイレクト
+        navigate('/');
+      }
     }
-  }, [videos.length, isLoading, startSession]);
+  }, [videos.length, isLoading, resumeSession, navigate]);
 
   // 次の動画をプリロード
   useVideoPreload(videos, currentIndex);
@@ -157,10 +163,7 @@ export function VerticalPlayerPage() {
       <div className="flex flex-col h-dvh bg-white">
         <div className="flex-1 flex flex-col items-center justify-center p-6 gap-4">
           <p className="text-red-600">{error}</p>
-          <Button variant="primary" onClick={() => startSession()}>
-            再試行
-          </Button>
-          <Button variant="secondary" onClick={handleGoHome}>
+          <Button variant="primary" onClick={handleGoHome}>
             ホームへ戻る
           </Button>
         </div>
