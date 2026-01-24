@@ -1,4 +1,4 @@
-import type { SessionStatsData } from '../../types';
+import type { SessionStatsData, Milestone } from '../../types';
 import { Button } from '../common/Button';
 
 // 苦手解除動画の情報
@@ -10,6 +10,8 @@ interface ResolvedWeakVideo {
 interface SessionCompleteScreenProps {
   stats: SessionStatsData;
   resolvedWeakVideos: ResolvedWeakVideo[];  // 苦手解除された動画リスト
+  completedChapters: string[];              // 完了した章
+  achievedMilestones: Milestone[];          // 達成したマイルストーン
   onRestart: () => void;
   onChangeRange: () => void;
   onGoHome: () => void;
@@ -69,6 +71,8 @@ function getMessageAndEmoji(stats: SessionStatsData): { message: string; emoji: 
 export function SessionCompleteScreen({
   stats,
   resolvedWeakVideos,
+  completedChapters,
+  achievedMilestones,
   onRestart,
   onChangeRange,
   onGoHome,
@@ -79,6 +83,8 @@ export function SessionCompleteScreen({
   const reviewedVideos = stats.videoStats.filter(v => v.feedbackCounts.bad > 0);
   const hasReviewMarked = reviewedVideos.length > 0;
   const hasResolvedWeak = resolvedWeakVideos.length > 0;
+  const hasCompletedChapters = completedChapters.length > 0;
+  const hasAchievedMilestones = achievedMilestones.length > 0;
 
   return (
     <div className="flex flex-col h-dvh bg-gradient-to-b from-blue-50 to-white overflow-hidden">
@@ -138,6 +144,61 @@ export function SessionCompleteScreen({
           )}
         </div>
       </div>
+
+      {/* マイルストーン達成（達成があった場合のみ表示） */}
+      {hasAchievedMilestones && (
+        <div className="flex-shrink-0 px-6 pb-4">
+          <div className="bg-yellow-50 rounded-2xl shadow-sm border border-yellow-200 p-4">
+            <h2 className="text-sm font-medium text-yellow-700 mb-3 flex items-center gap-2">
+              <span>🏆</span>
+              マイルストーン達成！
+            </h2>
+            <ul className="space-y-2">
+              {achievedMilestones.map((milestone) => (
+                <li
+                  key={milestone.count}
+                  className="flex items-center gap-3 p-2 bg-white rounded-lg"
+                >
+                  <span className="text-lg">{milestone.emoji}</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">
+                      累計{milestone.label}！
+                    </p>
+                    <p className="text-xs text-yellow-600">
+                      すごい継続力だね！
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* 章完了（完了があった場合のみ表示） */}
+      {hasCompletedChapters && (
+        <div className="flex-shrink-0 px-6 pb-4">
+          <div className="bg-purple-50 rounded-2xl shadow-sm border border-purple-200 p-4">
+            <h2 className="text-sm font-medium text-purple-700 mb-3 flex items-center gap-2">
+              <span>📖</span>
+              章を完了しました！
+            </h2>
+            <ul className="space-y-2">
+              {completedChapters.map((chapter) => (
+                <li
+                  key={chapter}
+                  className="flex items-center gap-3 p-2 bg-white rounded-lg"
+                >
+                  <span className="text-lg">✅</span>
+                  <p className="text-sm font-medium text-gray-900">
+                    {chapter}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* 苦手解除動画リスト（解除があった場合のみ表示） */}
       {hasResolvedWeak && (

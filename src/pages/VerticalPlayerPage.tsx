@@ -251,6 +251,8 @@ export function VerticalPlayerPage() {
       <SessionCompleteScreen
         stats={stats}
         resolvedWeakVideos={resolvedWeakVideos}
+        completedChapters={stats.completedChapters}
+        achievedMilestones={stats.achievedMilestones}
         onRestart={handleRestart}
         onChangeRange={handleChangeRange}
         onGoHome={handleGoHome}

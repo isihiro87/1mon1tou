@@ -453,6 +453,30 @@ function checkWeakResolution(videoId: string, records: LearningRecord[]): boolea
 
 **導入フェーズ**: Phase 3
 
+### マイルストーン (Milestone)
+
+**定義**: 累計視聴本数に基づく達成目標
+
+**マイルストーン一覧**:
+| 本数 | ラベル | 絵文字 |
+|-----|-------|--------|
+| 10 | 10本達成 | 🌟 |
+| 25 | 25本達成 | ⭐ |
+| 50 | 50本達成 | 🏅 |
+| 100 | 100本達成 | 🏆 |
+| 200 | 200本達成 | 👑 |
+
+**達成判定**:
+- セッション開始時の累計視聴本数を記録
+- セッション終了時に現在の累計視聴本数と比較
+- 開始時 < マイルストーン値 <= 終了時 なら達成
+
+**UX効果**:
+- セッション完了時に「マイルストーン達成！🏆」メッセージを表示
+- 継続的な学習のモチベーション維持
+
+**導入フェーズ**: Phase 3
+
 ### 正答率 (Accuracy Rate)
 
 **定義**: 問題に対する正解の割合
@@ -515,6 +539,8 @@ function checkWeakResolution(videoId: string, records: LearningRecord[]): boolea
 - 苦手だけモード
 - 苦手比率設定
 - 苦手解除通知（連続N回の復習で苦手から卒業）✅ 2026-01-24実装
+- マイルストーン達成通知 ✅ 2026-01-24実装
+- 章完了通知 ✅ 2026-01-24実装
 
 ### Phase 4
 
@@ -545,6 +571,9 @@ function checkWeakResolution(videoId: string, records: LearningRecord[]): boolea
 - [苦手問題](#苦手問題-weak-question) - ドメイン用語
 - [正答率](#正答率-accuracy-rate) - 計算・アルゴリズム
 - [セッションタイプ](#セッションタイプ-session-type) - ドメイン用語
+
+### ま行
+- [マイルストーン](#マイルストーン-milestone) - 計算・アルゴリズム
 
 ### た行
 - [テスト範囲](#テスト範囲-test-range) - ドメイン用語

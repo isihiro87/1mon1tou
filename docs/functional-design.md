@@ -416,6 +416,48 @@ class WeakVideoService {
 2. 最新のbad記録以降、連続N回のnon-badフィードバック（null, perfect, unsure）があること
 3. 条件を満たすと「苦手から卒業」と判定
 
+#### マイルストーン機能
+
+**責務**:
+- 累計視聴本数に基づくマイルストーン達成判定
+- セッション完了時のマイルストーン達成表示
+
+```typescript
+// マイルストーン定義
+const MILESTONES: Milestone[] = [
+  { count: 10, label: '10本達成', emoji: '🌟' },
+  { count: 25, label: '25本達成', emoji: '⭐' },
+  { count: 50, label: '50本達成', emoji: '🏅' },
+  { count: 100, label: '100本達成', emoji: '🏆' },
+  { count: 200, label: '200本達成', emoji: '👑' },
+];
+
+// 達成判定（verticalSessionStore.getSessionStats()内）
+const achievedMilestones = MILESTONES.filter(
+  (milestone) =>
+    totalViewCountAtStart < milestone.count &&
+    currentTotalViewCount >= milestone.count
+);
+```
+
+#### 章完了機能
+
+**責務**:
+- セッション内で全動画を視聴した章の検出
+- セッション完了時の章完了表示
+
+```typescript
+// 章完了判定（verticalSessionStore.getSessionStats()内）
+// セッション内の全動画を視聴した章を抽出
+const completedChapters: string[] = [];
+chapterVideoCount.forEach((count, chapter) => {
+  const viewedCount = chapterViewedCount.get(chapter) || 0;
+  if (viewedCount >= count) {
+    completedChapters.push(chapter);
+  }
+});
+```
+
 ---
 
 ## UI設計

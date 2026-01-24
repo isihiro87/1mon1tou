@@ -71,6 +71,13 @@ export interface VideoSessionStats {
   };
 }
 
+// マイルストーン定義
+export interface Milestone {
+  count: number;      // 達成条件（視聴本数）
+  label: string;      // 表示ラベル
+  emoji: string;      // 絵文字
+}
+
 export interface SessionStatsData {
   totalViews: number;
   totalFeedbacks: {
@@ -80,6 +87,8 @@ export interface SessionStatsData {
   };
   videoStats: VideoSessionStats[];
   resolvedWeakVideoIds: string[];  // このセッションで苦手解除された動画ID
+  completedChapters: string[];     // このセッションで完了した章
+  achievedMilestones: Milestone[]; // このセッションで達成したマイルストーン
 }
 
 // ===========================

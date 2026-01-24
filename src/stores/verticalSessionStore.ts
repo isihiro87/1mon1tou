@@ -4,7 +4,7 @@ import { RangeContentService } from '../services/RangeContentService';
 import { SessionPersistenceService } from '../services/SessionPersistenceService';
 import { useRangeStore } from './rangeStore';
 import { useLearningLogStore } from './learningLogStore';
-import { REVIEW_DELAY_VIDEOS } from '../utils/constants';
+import { REVIEW_DELAY_VIDEOS, MILESTONES } from '../utils/constants';
 
 // 動画IDごとの統計を管理するマップ型
 type VideoStatsMap = Map<string, {
@@ -26,6 +26,9 @@ interface VerticalSessionState {
 
   // 苦手解除追跡用状態
   weakVideoIdsAtStart: string[];       // セッション開始時の苦手動画IDリスト
+
+  // マイルストーン追跡用状態
+  totalViewCountAtStart: number;       // セッション開始時の累計視聴本数
 
   // 統計用状態
   videoStatsMap: VideoStatsMap;
@@ -57,6 +60,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   pendingReview: null,
   videosSinceReview: 0,
   weakVideoIdsAtStart: [],
+  totalViewCountAtStart: 0,
   videoStatsMap: new Map(),
 
   startSession: async () => {
@@ -83,8 +87,10 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
         throw new Error('選択された範囲に動画がありません');
       }
 
-      // セッション開始時の苦手動画IDを記録
-      const weakVideoIdsAtStart = useLearningLogStore.getState().getWeakVideoIds();
+      // セッション開始時の状態を記録
+      const logStore = useLearningLogStore.getState();
+      const weakVideoIdsAtStart = logStore.getWeakVideoIds();
+      const totalViewCountAtStart = logStore.getTotalViewCount();
 
       set({
         videos,
@@ -93,6 +99,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
         pendingReview: null,
         videosSinceReview: 0,
         weakVideoIdsAtStart,
+        totalViewCountAtStart,
         videoStatsMap: new Map(),
       });
 
@@ -123,8 +130,10 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
     const rangeStore = useRangeStore.getState();
     rangeStore.setOrderMode(persisted.orderMode);
 
-    // セッション再開時の苦手動画IDを記録
-    const weakVideoIdsAtStart = useLearningLogStore.getState().getWeakVideoIds();
+    // セッション再開時の状態を記録
+    const logStore = useLearningLogStore.getState();
+    const weakVideoIdsAtStart = logStore.getWeakVideoIds();
+    const totalViewCountAtStart = logStore.getTotalViewCount();
 
     set({
       videos: persisted.videos,
@@ -134,6 +143,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       pendingReview: null,
       videosSinceReview: 0,
       weakVideoIdsAtStart,
+      totalViewCountAtStart,
       videoStatsMap: new Map(),
     });
 
@@ -170,8 +180,9 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       return;
     }
 
-    // 復習セッション開始時の苦手動画IDを記録
-    const weakVideoIdsAtStart = useLearningLogStore.getState().getWeakVideoIds();
+    // 復習セッション開始時の状態を記録
+    const weakVideoIdsAtStart = logStore.getWeakVideoIds();
+    const totalViewCountAtStart = logStore.getTotalViewCount();
 
     set({
       videos,
@@ -181,6 +192,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       pendingReview: null,
       videosSinceReview: 0,
       weakVideoIdsAtStart,
+      totalViewCountAtStart,
       videoStatsMap: new Map(),
     });
 
@@ -366,6 +378,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       pendingReview: null,
       videosSinceReview: 0,
       weakVideoIdsAtStart: [],
+      totalViewCountAtStart: 0,
       videoStatsMap: new Map(),
     });
     SessionPersistenceService.clearSession();
@@ -392,7 +405,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   },
 
   getSessionStats: (): SessionStatsData => {
-    const { videoStatsMap, weakVideoIdsAtStart } = get();
+    const { videos, videoStatsMap, weakVideoIdsAtStart, totalViewCountAtStart } = get();
 
     // 動画別の統計を配列に変換
     const videoStats: VideoSessionStats[] = [];
@@ -402,6 +415,18 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       unsure: 0,
       bad: 0,
     };
+
+    // 章ごとの視聴状況を追跡
+    const chapterVideoCount = new Map<string, number>(); // 章ごとの動画数
+    const chapterViewedCount = new Map<string, number>(); // 章ごとの視聴数
+
+    // セッション内の動画の章ごとの総数をカウント
+    videos.forEach((video) => {
+      chapterVideoCount.set(
+        video.chapter,
+        (chapterVideoCount.get(video.chapter) || 0) + 1
+      );
+    });
 
     videoStatsMap.forEach((stats, videoId) => {
       videoStats.push({
@@ -417,18 +442,47 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
 
       totalViews += stats.viewCount;
       totalFeedbacks.bad += stats.reviewCount;
+
+      // 視聴した動画の章をカウント
+      if (stats.viewCount > 0) {
+        const video = videos.find((v) => v.id === videoId);
+        if (video) {
+          chapterViewedCount.set(
+            video.chapter,
+            (chapterViewedCount.get(video.chapter) || 0) + 1
+          );
+        }
+      }
     });
 
     // 苦手解除された動画IDを計算
-    const resolvedWeakVideoIds = useLearningLogStore
-      .getState()
-      .getResolvedWeakVideoIds(weakVideoIdsAtStart);
+    const logStore = useLearningLogStore.getState();
+    const resolvedWeakVideoIds = logStore.getResolvedWeakVideoIds(weakVideoIdsAtStart);
+
+    // 完了した章を算出（セッション内の全動画を視聴した章）
+    const completedChapters: string[] = [];
+    chapterVideoCount.forEach((count, chapter) => {
+      const viewedCount = chapterViewedCount.get(chapter) || 0;
+      if (viewedCount >= count) {
+        completedChapters.push(chapter);
+      }
+    });
+
+    // 達成したマイルストーンを算出
+    const currentTotalViewCount = logStore.getTotalViewCount();
+    const achievedMilestones = MILESTONES.filter(
+      (milestone) =>
+        totalViewCountAtStart < milestone.count &&
+        currentTotalViewCount >= milestone.count
+    );
 
     return {
       totalViews,
       totalFeedbacks,
       videoStats,
       resolvedWeakVideoIds,
+      completedChapters,
+      achievedMilestones,
     };
   },
 }));
