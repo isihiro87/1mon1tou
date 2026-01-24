@@ -9,6 +9,7 @@ import { Button } from '../components/common/Button';
 import { useVerticalSessionStore } from '../stores/verticalSessionStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useSessionHistoryStore } from '../stores/sessionHistoryStore';
+import { useRangeStore } from '../stores/rangeStore';
 import { usePlayerKeyboard } from '../hooks/usePlayerKeyboard';
 import { usePlayerWheel } from '../hooks/usePlayerWheel';
 import { useVideoPreload } from '../hooks/useVideoPreload';
@@ -47,6 +48,9 @@ export function VerticalPlayerPage() {
   // セッション履歴を追加する関数
   const addHistory = useSessionHistoryStore((state) => state.addHistory);
 
+  // 範囲選択の状態を取得
+  const selectedFolderIds = useRangeStore((state) => state.selectedFolderIds);
+
   // セッション完了時に履歴を保存（一度だけ実行）
   const sessionComplete = isComplete();
   const hasLoggedHistoryRef = useRef(false);
@@ -70,17 +74,22 @@ export function VerticalPlayerPage() {
     }
   }, [sessionComplete, videos.length, getSessionStats, addHistory]);
 
-  // セッション復元（ページ再読み込み時に永続化されたセッションから復元）
+  // セッション開始/復元
   useEffect(() => {
     if (videos.length === 0 && !isLoading) {
-      // 永続化セッションからの復元を試行
-      const resumed = resumeSession();
-      if (!resumed) {
-        // 復元失敗（セッションなし）→ホームにリダイレクト
-        navigate('/');
+      if (selectedFolderIds.length > 0) {
+        // 範囲選択からの遷移 → 新しいセッションを開始
+        startSession();
+      } else {
+        // ページ再読み込み or ホームからの続き → 永続化セッションからの復元を試行
+        const resumed = resumeSession();
+        if (!resumed) {
+          // 復元失敗（セッションなし）→ホームにリダイレクト
+          navigate('/');
+        }
       }
     }
-  }, [videos.length, isLoading, resumeSession, navigate]);
+  }, [videos.length, isLoading, selectedFolderIds.length, startSession, resumeSession, navigate]);
 
   // 次の動画をプリロード
   useVideoPreload(videos, currentIndex);
