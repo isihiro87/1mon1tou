@@ -3,11 +3,20 @@ import { useNavigate } from 'react-router-dom';
 interface HeaderProps {
   title?: string;
   showBack?: boolean;
+  onBack?: () => void;
   rightElement?: React.ReactNode;
 }
 
-export function Header({ title, showBack = false, rightElement }: HeaderProps) {
+export function Header({ title, showBack = false, onBack, rightElement }: HeaderProps) {
   const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
@@ -15,7 +24,7 @@ export function Header({ title, showBack = false, rightElement }: HeaderProps) {
         <div className="w-12">
           {showBack && (
             <button
-              onClick={() => navigate(-1)}
+              onClick={handleBack}
               className="flex items-center justify-center w-10 h-10 -ml-2 rounded-full hover:bg-gray-100 active:bg-gray-200"
               aria-label="戻る"
             >

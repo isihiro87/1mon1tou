@@ -60,13 +60,17 @@ export function RangeSelectPage() {
     navigate('/vertical-player');
   };
 
+  const handleBack = () => {
+    navigate('/');
+  };
+
   const isAllSelected = selectedFolderIds.length === availableFolders.length;
   const hasSelection = selectedFolderIds.length > 0;
 
   if (isLoading) {
     return (
       <div className="flex flex-col h-dvh bg-white">
-        <Header title="範囲選択" showBack />
+        <Header title="範囲選択" showBack onBack={handleBack} />
         <div className="flex-1 flex items-center justify-center">
           <Loading message="読み込み中..." />
         </div>
@@ -77,7 +81,7 @@ export function RangeSelectPage() {
   if (error) {
     return (
       <div className="flex flex-col h-dvh bg-white">
-        <Header title="範囲選択" showBack />
+        <Header title="範囲選択" showBack onBack={handleBack} />
         <div className="flex-1 flex flex-col items-center justify-center p-6 gap-4">
           <p className="text-red-600">{error}</p>
           <Button variant="primary" onClick={loadFolders}>
@@ -90,7 +94,7 @@ export function RangeSelectPage() {
 
   return (
     <div className="flex flex-col h-dvh bg-white">
-      <Header title="範囲選択" showBack />
+      <Header title="範囲選択" showBack onBack={handleBack} />
 
       {/* メインコンテンツ */}
       <div className="flex-1 overflow-y-auto p-4">
