@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
   SESSION: 'oneq_session',
   LOGS: 'oneq_logs',
   PERSISTED_SESSION: 'oneq_persisted_session',
+  SESSION_HISTORY: 'oneq_session_history',
 } as const;
 
 // デフォルト設定値

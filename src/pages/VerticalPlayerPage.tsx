@@ -7,6 +7,8 @@ import { NavigationButtons } from '../components/player/NavigationButtons';
 import { Loading } from '../components/common/Loading';
 import { Button } from '../components/common/Button';
 import { useVerticalSessionStore } from '../stores/verticalSessionStore';
+import { useSettingsStore } from '../stores/settingsStore';
+import { useSessionHistoryStore } from '../stores/sessionHistoryStore';
 import { usePlayerKeyboard } from '../hooks/usePlayerKeyboard';
 import { usePlayerWheel } from '../hooks/usePlayerWheel';
 import { useVideoPreload } from '../hooks/useVideoPreload';
@@ -27,6 +29,7 @@ export function VerticalPlayerPage() {
     error,
     pendingReview,
     startSession,
+    startReviewSession,
     resumeSession,
     markCurrentAsWeak,
     unmarkCurrentAsWeak,
@@ -37,6 +40,35 @@ export function VerticalPlayerPage() {
     isComplete,
     getSessionStats,
   } = useVerticalSessionStore();
+
+  // 設定から自動再生設定を取得
+  const autoPlayNextVideo = useSettingsStore((state) => state.settings.autoPlayNextVideo);
+
+  // セッション履歴を追加する関数
+  const addHistory = useSessionHistoryStore((state) => state.addHistory);
+
+  // セッション完了時に履歴を保存（一度だけ実行）
+  const sessionComplete = isComplete();
+  const hasLoggedHistoryRef = useRef(false);
+
+  // 新しいセッションが開始されたときにリセット（currentIndexが0かつ動画がある場合）
+  useEffect(() => {
+    if (currentIndex === 0 && videos.length > 0 && !sessionComplete) {
+      hasLoggedHistoryRef.current = false;
+    }
+  }, [currentIndex, videos.length, sessionComplete]);
+
+  useEffect(() => {
+    if (sessionComplete && videos.length > 0 && !hasLoggedHistoryRef.current) {
+      hasLoggedHistoryRef.current = true;
+      const stats = getSessionStats();
+      addHistory({
+        completedAt: Date.now(),
+        totalViews: stats.totalViews,
+        reviewMarkCount: stats.totalFeedbacks.bad,
+      });
+    }
+  }, [sessionComplete, videos.length, getSessionStats, addHistory]);
 
   // セッション復元（ページ再読み込み時に永続化されたセッションから復元）
   useEffect(() => {
@@ -64,10 +96,13 @@ export function VerticalPlayerPage() {
     hasWatchedEnoughRef.current = watched;
   }, []);
 
-  // 動画完了時の処理（直接次の動画へ、視聴完了として扱う）
+  // 動画完了時の処理（自動再生設定に応じて次へ進む）
   const handleVideoComplete = useCallback(() => {
-    goNext(true); // 動画が最後まで再生されたので視聴完了
-  }, [goNext]);
+    if (autoPlayNextVideo) {
+      goNext(true); // 動画が最後まで再生されたので視聴完了
+    }
+    // autoPlayNextVideoがfalseの場合は手動スワイプを待つ
+  }, [goNext, autoPlayNextVideo]);
 
   // 復習ボタン押下時の処理（トグル）
   const handleReviewPress = useCallback(() => {
@@ -108,7 +143,7 @@ export function VerticalPlayerPage() {
 
   // スワイプ操作
   const canSwipeDown = currentIndex > 0;
-  const canSwipeUp = currentIndex < videos.length - 1;
+  const canSwipeUp = true; // 最後の動画でもスワイプで結果画面へ進めるようにする
 
   const { swipeHandlers, translateY, isAnimating } = useVerticalSwipe({
     onSwipeUp: handleNext,
@@ -146,6 +181,19 @@ export function VerticalPlayerPage() {
     navigate('/range-select');
   }, [clearSession, navigate]);
 
+  // 復習マーク動画を復習
+  const handleReviewMarked = useCallback(() => {
+    const stats = getSessionStats();
+    const reviewedVideoIds = stats.videoStats
+      .filter((v) => v.feedbackCounts.bad > 0)
+      .map((v) => v.videoId);
+
+    if (reviewedVideoIds.length > 0) {
+      clearSession();
+      startReviewSession(reviewedVideoIds);
+    }
+  }, [getSessionStats, clearSession, startReviewSession]);
+
   // ローディング中
   if (isLoading) {
     return (
@@ -174,7 +222,6 @@ export function VerticalPlayerPage() {
   const currentVideo = getCurrentVideo();
   const prevVideo = currentIndex > 0 ? videos[currentIndex - 1] : null;
   const nextVideo = currentIndex < videos.length - 1 ? videos[currentIndex + 1] : null;
-  const sessionComplete = isComplete();
 
   // 完了画面（全動画視聴後）
   if (videos.length > 0 && sessionComplete) {
@@ -185,6 +232,7 @@ export function VerticalPlayerPage() {
         onRestart={handleRestart}
         onChangeRange={handleChangeRange}
         onGoHome={handleGoHome}
+        onReviewMarked={handleReviewMarked}
       />
     );
   }
@@ -270,13 +318,36 @@ export function VerticalPlayerPage() {
         </div>
 
         {/* 次の動画プレビュー（下部） */}
-        {nextVideo && (
+        {nextVideo ? (
           <div
             className="absolute left-0 right-0 h-full bg-black"
             style={{ top: '100%' }}
           >
             <div className="h-full w-full flex items-center justify-center">
               <div className="text-white/50 text-sm">{nextVideo.displayName}</div>
+            </div>
+          </div>
+        ) : (
+          /* 最後の動画の場合は結果画面への案内（スワイプ量に応じたフェードイン） */
+          <div
+            className="absolute left-0 right-0 h-full bg-gradient-to-b from-black to-blue-900 transition-opacity duration-150"
+            style={{
+              top: '100%',
+              // スワイプ量に応じてopacityを変化（上スワイプ時: translateY < 0）
+              opacity: translateY < 0 ? Math.min(1, Math.abs(translateY) / 200) : 0.5,
+            }}
+          >
+            <div
+              className="h-full w-full flex flex-col items-center justify-center gap-4 transition-transform duration-150"
+              style={{
+                // スワイプ量に応じてスケールアップ
+                transform: translateY < 0
+                  ? `scale(${Math.min(1.1, 0.8 + Math.abs(translateY) / 500)})`
+                  : 'scale(0.8)',
+              }}
+            >
+              <div className="text-4xl">🎉</div>
+              <div className="text-white text-lg font-medium">結果を見る</div>
             </div>
           </div>
         )}
@@ -295,7 +366,9 @@ export function VerticalPlayerPage() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
           </svg>
-          上にスワイプで次へ
+          {currentIndex === videos.length - 1
+            ? '上にスワイプで結果へ'
+            : '上にスワイプで次へ'}
         </div>
         {currentIndex > 0 && (
           <div className="flex items-center gap-2 text-white/70 text-xs">

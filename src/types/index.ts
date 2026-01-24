@@ -158,3 +158,14 @@ export interface SessionStatsData {
   };
   videoStats: VideoSessionStats[];
 }
+
+// ===========================
+// セッション履歴
+// ===========================
+
+export interface SessionHistoryEntry {
+  id: string;
+  completedAt: number;
+  totalViews: number;
+  reviewMarkCount: number;
+}

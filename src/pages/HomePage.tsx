@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/common/Button';
 import { WeakReviewButton } from '../components/home/WeakReviewButton';
 import { ContinueButton } from '../components/home/ContinueButton';
+import { LearningHistorySection } from '../components/home/LearningHistorySection';
 import { useLearningLogStore } from '../stores/learningLogStore';
 import { useRangeStore } from '../stores/rangeStore';
 import { useVerticalSessionStore } from '../stores/verticalSessionStore';
@@ -145,6 +146,9 @@ export function HomePage() {
           )}
         </div>
       </div>
+
+      {/* 学習履歴セクション */}
+      <LearningHistorySection />
 
       {/* メインコンテンツ */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8">

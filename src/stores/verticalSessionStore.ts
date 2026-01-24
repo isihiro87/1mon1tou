@@ -29,6 +29,7 @@ interface VerticalSessionState {
 
   // アクション
   startSession: () => Promise<void>;
+  startReviewSession: (videoIds: string[]) => void; // 復習マーク動画でセッション開始
   resumeSession: () => boolean;        // 前回セッションから再開
   markCurrentAsWeak: () => void;       // 復習ボタン押下時に呼ばれる
   unmarkCurrentAsWeak: () => void;     // 復習ボタン解除時に呼ばれる
@@ -125,6 +126,56 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
     });
 
     return true;
+  },
+
+  startReviewSession: (videoIds: string[]) => {
+    // 復習マーク動画でセッションを開始
+    // learningLogStoreから動画情報を取得（videoStatsMapはセッション終了時にクリアされるため）
+    const logStore = useLearningLogStore.getState();
+
+    // videoIdsに対応する動画をlearningLogStoreから取得して、VerticalVideo形式に変換
+    const videos: VerticalVideo[] = videoIds.map((id) => {
+      // 最新の記録からdisplayNameを取得
+      const latestRecord = logStore.records
+        .filter((r) => r.videoId === id)
+        .sort((a, b) => b.timestamp - a.timestamp)[0];
+
+      // 動画IDから章とトピックを抽出（フォーマット: "chapter/topic"）
+      const parts = id.split('/');
+      const chapter = latestRecord?.chapter || parts[0] || '';
+      const topic = latestRecord?.topic || parts[1] || '';
+
+      return {
+        id,
+        url: `/datas/history/${id}/qas-output.mp4`,
+        displayName: latestRecord?.displayName || id,
+        chapter,
+        topic,
+      };
+    });
+
+    if (videos.length === 0) {
+      return;
+    }
+
+    set({
+      videos,
+      currentIndex: 0,
+      isLoading: false,
+      error: null,
+      pendingReview: null,
+      videosSinceReview: 0,
+      videoStatsMap: new Map(),
+    });
+
+    // セッション永続化
+    SessionPersistenceService.saveSession({
+      videos,
+      currentIndex: 0,
+      selectedFolderIds: videoIds,
+      orderMode: 'sequential',
+      savedAt: Date.now(),
+    });
   },
 
   markCurrentAsWeak: () => {
