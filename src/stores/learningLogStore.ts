@@ -39,6 +39,7 @@ interface LearningLogState {
   getChapterCompletionRate: (chapter: string) => number; // 0-100
   getWeakVideoIds: () => string[]; // 苦手動画IDリスト
   getWeakVideoCount: () => number; // 苦手動画件数
+  getResolvedWeakVideoIds: (previousWeakIds: string[]) => string[]; // 苦手解除された動画ID
 }
 
 // 日付をYYYY-MM-DD形式で取得
@@ -141,6 +142,11 @@ export const useLearningLogStore = create<LearningLogState>()(
 
       getWeakVideoCount: (): number => {
         return get().getWeakVideoIds().length;
+      },
+
+      getResolvedWeakVideoIds: (previousWeakIds: string[]): string[] => {
+        const { records } = get();
+        return WeakVideoService.getResolvedWeakVideoIds(previousWeakIds, records);
       },
     }),
     {

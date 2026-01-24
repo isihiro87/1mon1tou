@@ -25,7 +25,7 @@
 - 「連続学習プレイヤーで古代史を学習する」
 - 「スワイプで次のコンテンツへ進む」
 
-**実装箇所**: `src/pages/PlayerPage.tsx`
+**実装箇所**: `src/pages/VerticalPlayerPage.tsx`
 
 **英語表記**: Continuous Player
 
@@ -426,6 +426,33 @@ function isWeak(stats: QuestionStats, threshold: number): boolean {
 
 **導入フェーズ**: Phase 3
 
+### 苦手解除 (Weak Resolution)
+
+**定義**: 苦手と判定された動画が、繰り返し学習により苦手状態から解除されること
+
+**解除条件**:
+- 過去にfeedback='bad'（復習ボタン押下）の記録があること
+- 最新のbad記録以降、連続N回のnon-badフィードバックがあること
+  - non-badフィードバック: null（復習ボタン未押下）、perfect、unsure
+  - N = WEAK_RESOLUTION_THRESHOLD（デフォルト: 2回）
+
+**計算式**:
+```typescript
+// 苦手解除に必要な連続回数
+const WEAK_RESOLUTION_THRESHOLD = 2;
+
+function checkWeakResolution(videoId: string, records: LearningRecord[]): boolean {
+  // 最新のbad記録以降の連続non-bad回数をカウント
+  // 連続回数 >= WEAK_RESOLUTION_THRESHOLD なら解除
+}
+```
+
+**UX効果**:
+- セッション完了時に「苦手から卒業🎓」メッセージを表示
+- 達成感を演出し、モチベーション維持に貢献
+
+**導入フェーズ**: Phase 3
+
 ### 正答率 (Accuracy Rate)
 
 **定義**: 問題に対する正解の割合
@@ -487,6 +514,7 @@ function isWeak(stats: QuestionStats, threshold: number): boolean {
 - 苦手判定
 - 苦手だけモード
 - 苦手比率設定
+- 苦手解除通知（連続N回の復習で苦手から卒業）✅ 2026-01-24実装
 
 ### Phase 4
 
@@ -513,6 +541,7 @@ function isWeak(stats: QuestionStats, threshold: number): boolean {
 - [コンテンツ](#コンテンツ-content) - ドメイン用語
 
 ### さ行
+- [苦手解除](#苦手解除-weak-resolution) - 計算・アルゴリズム
 - [苦手問題](#苦手問題-weak-question) - ドメイン用語
 - [正答率](#正答率-accuracy-rate) - 計算・アルゴリズム
 - [セッションタイプ](#セッションタイプ-session-type) - ドメイン用語

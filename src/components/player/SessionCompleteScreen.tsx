@@ -1,8 +1,15 @@
 import type { SessionStatsData } from '../../types';
 import { Button } from '../common/Button';
 
+// 苦手解除動画の情報
+interface ResolvedWeakVideo {
+  id: string;
+  displayName: string;
+}
+
 interface SessionCompleteScreenProps {
   stats: SessionStatsData;
+  resolvedWeakVideos: ResolvedWeakVideo[];  // 苦手解除された動画リスト
   onRestart: () => void;
   onChangeRange: () => void;
   onGoHome: () => void;
@@ -61,6 +68,7 @@ function getMessageAndEmoji(stats: SessionStatsData): { message: string; emoji: 
 
 export function SessionCompleteScreen({
   stats,
+  resolvedWeakVideos,
   onRestart,
   onChangeRange,
   onGoHome,
@@ -70,6 +78,7 @@ export function SessionCompleteScreen({
   const reviewCount = stats.totalFeedbacks.bad;
   const reviewedVideos = stats.videoStats.filter(v => v.feedbackCounts.bad > 0);
   const hasReviewMarked = reviewedVideos.length > 0;
+  const hasResolvedWeak = resolvedWeakVideos.length > 0;
 
   return (
     <div className="flex flex-col h-dvh bg-gradient-to-b from-blue-50 to-white overflow-hidden">
@@ -112,8 +121,48 @@ export function SessionCompleteScreen({
               </p>
             </div>
           )}
+
+          {/* 苦手解除された動画がある場合 */}
+          {hasResolvedWeak && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xl">🎓</span>
+                <span className="text-sm font-medium text-green-700">
+                  苦手から卒業！ ({resolvedWeakVideos.length}本)
+                </span>
+              </div>
+              <p className="text-xs text-green-600">
+                繰り返し学習の成果だね！すごい！
+              </p>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* 苦手解除動画リスト（解除があった場合のみ表示） */}
+      {hasResolvedWeak && (
+        <div className="flex-shrink-0 px-6 pb-4">
+          <div className="bg-green-50 rounded-2xl shadow-sm border border-green-200 p-4">
+            <h2 className="text-sm font-medium text-green-700 mb-3 flex items-center gap-2">
+              <span>🌟</span>
+              苦手から卒業した動画
+            </h2>
+            <ul className="space-y-2">
+              {resolvedWeakVideos.map((video) => (
+                <li
+                  key={video.id}
+                  className="flex items-center gap-3 p-2 bg-white rounded-lg"
+                >
+                  <span className="text-lg">✨</span>
+                  <p className="text-sm font-medium text-gray-900 truncate flex-1">
+                    {video.displayName}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* 復習マークした動画リスト */}
       <div className="flex-1 min-h-0 px-6 pb-4 overflow-hidden">

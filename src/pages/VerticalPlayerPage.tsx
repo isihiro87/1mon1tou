@@ -235,9 +235,22 @@ export function VerticalPlayerPage() {
   // 完了画面（全動画視聴後）
   if (videos.length > 0 && sessionComplete) {
     const stats = getSessionStats();
+    // 苦手解除された動画のdisplayNameを取得
+    const resolvedWeakVideos = stats.resolvedWeakVideoIds.map((id) => {
+      // videoStatsから該当動画のdisplayNameを取得
+      const videoStat = stats.videoStats.find((v) => v.videoId === id);
+      // 見つからない場合はvideos配列から探す
+      const video = videos.find((v) => v.id === id);
+      return {
+        id,
+        displayName: videoStat?.displayName || video?.displayName || id,
+      };
+    });
+
     return (
       <SessionCompleteScreen
         stats={stats}
+        resolvedWeakVideos={resolvedWeakVideos}
         onRestart={handleRestart}
         onChangeRange={handleChangeRange}
         onGoHome={handleGoHome}

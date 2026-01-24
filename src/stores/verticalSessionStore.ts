@@ -24,6 +24,9 @@ interface VerticalSessionState {
   pendingReview: VerticalVideo | null; // 復習ボタン押下で1動画後に挿入予定
   videosSinceReview: number;           // pendingReview設定後に見た動画数
 
+  // 苦手解除追跡用状態
+  weakVideoIdsAtStart: string[];       // セッション開始時の苦手動画IDリスト
+
   // 統計用状態
   videoStatsMap: VideoStatsMap;
 
@@ -53,6 +56,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   error: null,
   pendingReview: null,
   videosSinceReview: 0,
+  weakVideoIdsAtStart: [],
   videoStatsMap: new Map(),
 
   startSession: async () => {
@@ -79,12 +83,16 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
         throw new Error('選択された範囲に動画がありません');
       }
 
+      // セッション開始時の苦手動画IDを記録
+      const weakVideoIdsAtStart = useLearningLogStore.getState().getWeakVideoIds();
+
       set({
         videos,
         currentIndex: 0,
         isLoading: false,
         pendingReview: null,
         videosSinceReview: 0,
+        weakVideoIdsAtStart,
         videoStatsMap: new Map(),
       });
 
@@ -115,6 +123,9 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
     const rangeStore = useRangeStore.getState();
     rangeStore.setOrderMode(persisted.orderMode);
 
+    // セッション再開時の苦手動画IDを記録
+    const weakVideoIdsAtStart = useLearningLogStore.getState().getWeakVideoIds();
+
     set({
       videos: persisted.videos,
       currentIndex: persisted.currentIndex,
@@ -122,6 +133,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       error: null,
       pendingReview: null,
       videosSinceReview: 0,
+      weakVideoIdsAtStart,
       videoStatsMap: new Map(),
     });
 
@@ -158,6 +170,9 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       return;
     }
 
+    // 復習セッション開始時の苦手動画IDを記録
+    const weakVideoIdsAtStart = useLearningLogStore.getState().getWeakVideoIds();
+
     set({
       videos,
       currentIndex: 0,
@@ -165,6 +180,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       error: null,
       pendingReview: null,
       videosSinceReview: 0,
+      weakVideoIdsAtStart,
       videoStatsMap: new Map(),
     });
 
@@ -349,6 +365,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       error: null,
       pendingReview: null,
       videosSinceReview: 0,
+      weakVideoIdsAtStart: [],
       videoStatsMap: new Map(),
     });
     SessionPersistenceService.clearSession();
@@ -375,7 +392,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   },
 
   getSessionStats: (): SessionStatsData => {
-    const { videoStatsMap } = get();
+    const { videoStatsMap, weakVideoIdsAtStart } = get();
 
     // 動画別の統計を配列に変換
     const videoStats: VideoSessionStats[] = [];
@@ -402,10 +419,16 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       totalFeedbacks.bad += stats.reviewCount;
     });
 
+    // 苦手解除された動画IDを計算
+    const resolvedWeakVideoIds = useLearningLogStore
+      .getState()
+      .getResolvedWeakVideoIds(weakVideoIdsAtStart);
+
     return {
       totalViews,
       totalFeedbacks,
       videoStats,
+      resolvedWeakVideoIds,
     };
   },
 }));

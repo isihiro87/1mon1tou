@@ -1,10 +1,4 @@
 // ===========================
-// 基本型
-// ===========================
-
-export type AnswerResult = 'correct' | 'incorrect';
-
-// ===========================
 // エンティティ: Subject（科目）
 // ===========================
 
@@ -17,86 +11,14 @@ export interface Subject {
 }
 
 // ===========================
-// エンティティ: Video（動画）
-// ===========================
-
-export interface Video {
-  id: string;
-  title: string;
-  url: string;
-  chapter?: string;
-  topic?: string;
-}
-
-// ===========================
-// エンティティ: Question（問題）
-// ===========================
-
-export interface Question {
-  id: string;
-  videoId: string;
-  questionText: string;
-  correctAnswer: string;
-  wrongAnswers?: string[];
-  explanation?: string;
-}
-
-// ===========================
 // エンティティ: UserSettings（ユーザー設定）
 // ===========================
 
 export interface UserSettings {
-  videosPerSession: 3 | 5 | 10;
-  autoNextVideo: boolean;
-  autoNextQuiz: boolean;
   autoPlayNextVideo: boolean;    // 動画終了後に自動で次の動画へ
 }
 
-// ===========================
-// エンティティ: LearningLog（学習ログ）
-// ===========================
-
-export interface LearningLog {
-  id: string;
-  questionId: string;
-  result: AnswerResult;
-  timestamp: number;
-}
-
-// ===========================
-// エンティティ: SessionContent（セッションコンテンツ）
-// ===========================
-
-export interface SessionContent {
-  type: 'video' | 'question';
-  contentId: string;
-  completed: boolean;
-  answeredCorrectly?: boolean;
-}
-
-// ===========================
-// エンティティ: Session（セッション状態）
-// ===========================
-
-export interface Session {
-  contents: SessionContent[];
-  currentIndex: number;
-  startedAt: number;
-}
-
 // デフォルト値は src/utils/constants.ts で定義
-
-// ===========================
-// コンテンツデータ形式（JSON）
-// ===========================
-
-export interface VideosData {
-  videos: Video[];
-}
-
-export interface QuestionsData {
-  questions: Question[];
-}
 
 // ===========================
 // 範囲選択機能
@@ -157,6 +79,7 @@ export interface SessionStatsData {
     bad: number;
   };
   videoStats: VideoSessionStats[];
+  resolvedWeakVideoIds: string[];  // このセッションで苦手解除された動画ID
 }
 
 // ===========================
