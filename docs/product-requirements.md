@@ -219,12 +219,12 @@
 - 正答率計算用の集計情報（都度計算 or キャッシュ）
 
 ### 設定データ
-- videosPerSession
-- rule: videoN / questionM
-- orderMode（順番/ランダム/苦手優先）
-- autoNext（動画→問題、問題→次動画）
-- weakThreshold（苦手閾値）
+- autoPlayNextVideo（動画終了後に自動で次へ）
+- orderMode（順番/ランダム/スマート）: 範囲選択時に指定
+- weakThreshold（苦手閾値）: Phase 3以降
 - rangePresets（Phase 4）
+
+**注**: 動画本数は範囲選択画面で直接選択するため、設定には含まない。
 
 ### 保存方式（段階的拡張）
 - **Phase 1〜2**: 端末内保存（localStorage / IndexedDB）

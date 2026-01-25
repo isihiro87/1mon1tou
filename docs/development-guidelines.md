@@ -34,17 +34,17 @@ const MAX_RETRY_COUNT = 3;
 
 ```typescript
 // クラス: PascalCase、名詞 + 役割接尾辞
-class SessionService { }
+class RangeContentService { }
 class StorageService { }
 
 // インターフェース: PascalCase
-interface Video { }
-interface Question { }
+interface RangeFolder { }
+interface VerticalVideo { }
 interface UserSettings { }
 
 // 型エイリアス: PascalCase
-type SessionType = 'all' | 'test_range' | 'weak_only' | 'random';
-type OrderMode = 'sequential' | 'random' | 'weak_first';
+type OrderMode = 'sequential' | 'random' | 'smart';
+type FeedbackType = 'perfect' | 'unsure' | 'bad';
 ```
 
 #### React コンポーネント
@@ -304,7 +304,7 @@ main (本番環境)
 | style | フォーマット | `style: Prettier設定を適用` |
 | refactor | リファクタリング | `refactor(store): セッション状態を分離` |
 | perf | パフォーマンス改善 | `perf(video): プリロード戦略を最適化` |
-| test | テスト | `test(service): SessionServiceのテストを追加` |
+| test | テスト | `test(service): RangeContentServiceのテストを追加` |
 | build | ビルドシステム | `build: Vite設定を更新` |
 | ci | CI/CD | `ci: GitHub Actionsワークフローを追加` |
 | chore | その他 | `chore: 依存関係を更新` |
@@ -391,38 +391,37 @@ Closes #[番号]
 
 **Given-When-Then パターン**:
 ```typescript
-describe('SessionService', () => {
-  describe('createSession', () => {
-    it('設定に基づいてセッションを生成する', () => {
+describe('RangeContentService', () => {
+  describe('createVideoListFromFolders', () => {
+    it('選択されたフォルダから動画リストを生成する', () => {
       // Given: 準備
-      const settings: UserSettings = {
-        videosPerSession: 5,
-        autoNextVideo: true,
-        autoNextQuiz: true,
-      };
-      const videos = createMockVideos(10);
-      const questions = createMockQuestions(20);
+      const folders = createMockFolders(10);
+      const selectedIds = ['folder1', 'folder2', 'folder3'];
+      const orderMode = 'sequential';
 
       // When: 実行
-      const session = createSession(settings, videos, questions);
+      const videos = RangeContentService.createVideoListFromFolders(
+        folders, selectedIds, orderMode
+      );
 
       // Then: 検証
-      const videoContents = session.filter(c => c.type === 'video');
-      expect(videoContents).toHaveLength(5);
+      expect(videos).toHaveLength(3);
     });
 
-    it('動画と問題が交互に配置される', () => {
+    it('ランダムモードで順番がシャッフルされる', () => {
       // Given
-      const settings = { videosPerSession: 3 };
-      const videos = createMockVideos(3);
-      const questions = createMockQuestions(3);
+      const folders = createMockFolders(5);
+      const selectedIds = folders.map(f => f.id);
+      const orderMode = 'random';
 
       // When
-      const session = createSession(settings, videos, questions);
+      const videos = RangeContentService.createVideoListFromFolders(
+        folders, selectedIds, orderMode
+      );
 
       // Then
-      expect(session[0].type).toBe('video');
-      expect(session[1].type).toBe('question');
+      expect(videos).toHaveLength(5);
+      // 順番がシャッフルされていることを確認（または同じ順番でないことを確認）
     });
   });
 });

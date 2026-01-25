@@ -8,6 +8,7 @@ export interface PersistedSession {
   selectedFolderIds: string[];
   orderMode: OrderMode;
   savedAt: number;
+  playbackPosition?: number; // 現在の動画の再生位置（秒）
 }
 
 // セッション永続化サービス

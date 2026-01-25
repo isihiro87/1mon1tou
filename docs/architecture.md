@@ -291,10 +291,10 @@ sequenceDiagram
 ```typescript
 // Zodによるスキーマ定義
 const userSettingsSchema = z.object({
-  videosPerSession: z.union([z.literal(3), z.literal(5), z.literal(10)]),
-  autoNextVideo: z.boolean(),
-  autoNextQuiz: z.boolean(),
+  autoPlayNextVideo: z.boolean(),
 });
+
+const orderModeSchema = z.enum(['sequential', 'random', 'smart']);
 ```
 
 ---
@@ -338,23 +338,24 @@ src/
 
 - **フレームワーク**: Vitest
 - **対象**:
-  - サービスクラス（SessionService等）
+  - サービスクラス（RangeContentService等）
   - ユーティリティ関数
   - Zodスキーマ
 - **カバレッジ目標**: 80%以上
 
 ```typescript
 // テスト例
-describe('SessionService', () => {
-  it('設定に基づいてセッションを生成する', () => {
-    const service = new SessionService();
-    const settings = { videosPerSession: 5 };
-    const videos = [...]; // テストデータ
-    const questions = [...]; // テストデータ
+describe('RangeContentService', () => {
+  it('選択されたフォルダから動画リストを生成する', () => {
+    const folders = [...]; // テストデータ
+    const selectedIds = ['folder1', 'folder2'];
+    const orderMode = 'sequential';
 
-    const session = service.createSession(settings, videos, questions);
+    const videos = RangeContentService.createVideoListFromFolders(
+      folders, selectedIds, orderMode
+    );
 
-    expect(session.contents.filter(c => c.type === 'video')).toHaveLength(5);
+    expect(videos).toHaveLength(2);
   });
 });
 ```

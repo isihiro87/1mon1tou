@@ -50,56 +50,67 @@ oneq-onea/
 src/
 ├── components/                    # UIコンポーネント
 │   ├── player/                    # プレイヤー関連
-│   │   ├── VideoPlayer.tsx        # 動画プレイヤー
-│   │   ├── QuestionCard.tsx       # 問題カード
-│   │   └── ProgressBar.tsx        # 進捗バー
+│   │   ├── VerticalVideoPlayer.tsx # 縦型動画プレイヤー
+│   │   ├── SessionCompleteScreen.tsx # セッション完了画面
+│   │   ├── NavigationButtons.tsx  # ナビゲーションボタン
+│   │   └── ReviewToast.tsx        # 復習トースト
 │   ├── home/                      # ホーム画面関連
-│   │   └── StartButton.tsx        # 開始ボタン
+│   │   ├── StartLearningCard.tsx  # 学習開始カード
+│   │   └── LearningHistorySection.tsx # 学習履歴セクション
+│   ├── range/                     # 範囲選択関連
+│   │   ├── ChapterGroup.tsx       # 章グループ
+│   │   └── OrderModeSelector.tsx  # 出題順選択
 │   ├── settings/                  # 設定画面関連
-│   │   ├── VideoCountSelector.tsx # 動画本数選択
 │   │   └── AutoNextToggle.tsx     # 自動遷移トグル
 │   └── common/                    # 共通コンポーネント
 │       ├── Button.tsx             # ボタン
-│       ├── Card.tsx               # カード
-│       └── Loading.tsx            # ローディング
+│       ├── Header.tsx             # ヘッダー
+│       ├── Loading.tsx            # ローディング
+│       └── AuthStatusButton.tsx   # 認証状態ボタン
 ├── pages/                         # ページコンポーネント
 │   ├── HomePage.tsx               # ホーム画面
-│   ├── PlayerPage.tsx             # 連続学習プレイヤー
+│   ├── RangeSelectPage.tsx        # 範囲選択画面
+│   ├── VerticalPlayerPage.tsx     # 縦型連続学習プレイヤー
 │   ├── SettingsPage.tsx           # 設定画面
-│   └── ProgressPage.tsx           # 進捗画面（Phase 3〜）
+│   └── LoginPage.tsx              # ログイン画面
 ├── stores/                        # Zustand状態管理
-│   ├── sessionStore.ts            # セッション状態
-│   └── settingsStore.ts           # 設定状態
+│   ├── verticalSessionStore.ts    # 縦型セッション状態
+│   ├── rangeStore.ts              # 範囲選択状態
+│   ├── settingsStore.ts           # 設定状態
+│   ├── authStore.ts               # 認証状態
+│   ├── learningLogStore.ts        # 学習ログ状態
+│   └── sessionHistoryStore.ts     # セッション履歴状態
 ├── services/                      # ビジネスロジック
-│   ├── SessionService.ts          # セッション管理
+│   ├── RangeContentService.ts     # 範囲コンテンツ管理
+│   ├── SessionPersistenceService.ts # セッション永続化
 │   ├── StorageService.ts          # ローカルストレージ
-│   └── ContentService.ts          # コンテンツ取得
+│   ├── AuthService.ts             # 認証サービス
+│   ├── WeakVideoService.ts        # 苦手動画サービス
+│   └── VideoPreloader.ts          # 動画プリローダー
 ├── hooks/                         # カスタムフック
-│   ├── useSession.ts              # セッション操作
-│   ├── usePlayer.ts               # プレイヤー操作
-│   └── useSwipe.ts                # スワイプ操作
+│   ├── useVerticalSwipe.ts        # 縦スワイプ操作
+│   ├── usePlayerKeyboard.ts       # キーボード操作
+│   ├── usePlayerWheel.ts          # ホイール操作
+│   ├── useVideoPreload.ts         # 動画プリロード
+│   └── useVideoWatchProgress.ts   # 視聴進捗
 ├── types/                         # 型定義
-│   ├── video.ts                   # Video型
-│   ├── question.ts                # Question型
-│   ├── session.ts                 # Session型
-│   └── settings.ts                # Settings型
+│   └── index.ts                   # 全型定義
 ├── utils/                         # ユーティリティ
-│   ├── shuffle.ts                 # シャッフル関数
-│   └── formatters.ts              # フォーマット関数
-├── constants/                     # 定数定義
-│   ├── colors.ts                  # カラー定義
-│   └── config.ts                  # アプリ設定
+│   ├── constants.ts               # 定数定義
+│   └── errors.ts                  # エラークラス
+├── config/                        # 設定
+│   └── firebase.ts                # Firebase設定
 ├── App.tsx                        # ルートコンポーネント
 ├── main.tsx                       # エントリーポイント
 └── index.css                      # グローバルスタイル（Tailwind）
 ```
 
 **命名規則**:
-- コンポーネント: PascalCase（例: `VideoPlayer.tsx`）
-- フック: camelCase + use接頭辞（例: `useSession.ts`）
-- ストア: camelCase + Store接尾辞（例: `sessionStore.ts`）
-- サービス: PascalCase + Service接尾辞（例: `SessionService.ts`）
-- 型定義: camelCase（例: `video.ts`）
+- コンポーネント: PascalCase（例: `VerticalVideoPlayer.tsx`）
+- フック: camelCase + use接頭辞（例: `useVerticalSwipe.ts`）
+- ストア: camelCase + Store接尾辞（例: `verticalSessionStore.ts`）
+- サービス: PascalCase + Service接尾辞（例: `RangeContentService.ts`）
+- 型定義: `index.ts`に統合
 
 **依存関係**:
 - `pages/` → `components/`, `hooks/`, `stores/`
@@ -180,10 +191,10 @@ content/
 tests/
 ├── unit/                          # ユニットテスト
 │   ├── services/
-│   │   ├── SessionService.test.ts
+│   │   ├── RangeContentService.test.ts
 │   │   └── StorageService.test.ts
 │   └── stores/
-│       └── sessionStore.test.ts
+│       └── verticalSessionStore.test.ts
 └── e2e/                           # E2Eテスト（Playwright）
     └── learning-flow.spec.ts
 ```
@@ -197,18 +208,18 @@ tests/
 | ファイル種別 | 配置先 | 命名規則 | 例 |
 |------------|--------|---------|-----|
 | ページコンポーネント | `src/pages/` | PascalCase + Page | `HomePage.tsx` |
-| UIコンポーネント | `src/components/` | PascalCase | `VideoPlayer.tsx` |
-| Zustandストア | `src/stores/` | camelCase + Store | `sessionStore.ts` |
-| サービスクラス | `src/services/` | PascalCase + Service | `SessionService.ts` |
-| カスタムフック | `src/hooks/` | camelCase + use | `useSession.ts` |
-| 型定義 | `src/types/` | camelCase | `video.ts` |
-| 定数 | `src/constants/` | camelCase | `colors.ts` |
+| UIコンポーネント | `src/components/` | PascalCase | `VerticalVideoPlayer.tsx` |
+| Zustandストア | `src/stores/` | camelCase + Store | `verticalSessionStore.ts` |
+| サービスクラス | `src/services/` | PascalCase + Service | `RangeContentService.ts` |
+| カスタムフック | `src/hooks/` | camelCase + use | `useVerticalSwipe.ts` |
+| 型定義 | `src/types/` | index.tsに統合 | `index.ts` |
+| 定数・設定 | `src/utils/` | camelCase | `constants.ts` |
 
 ### テストファイル
 
 | テスト種別 | 配置先 | 命名規則 | 例 |
 |-----------|--------|---------|-----|
-| ユニットテスト | `tests/unit/` | [対象].test.ts | `SessionService.test.ts` |
+| ユニットテスト | `tests/unit/` | [対象].test.ts | `RangeContentService.test.ts` |
 | E2Eテスト | `tests/e2e/` | [シナリオ].spec.ts | `learning-flow.spec.ts` |
 
 ### 設定ファイル
@@ -235,24 +246,21 @@ tests/
 ### ファイル名
 
 - **コンポーネント**: PascalCase
-  - 例: `VideoPlayer.tsx`, `QuestionCard.tsx`
+  - 例: `VerticalVideoPlayer.tsx`, `SessionCompleteScreen.tsx`
 - **フック**: camelCase + use接頭辞
-  - 例: `useSession.ts`, `usePlayer.ts`
+  - 例: `useVerticalSwipe.ts`, `usePlayerKeyboard.ts`
 - **ストア**: camelCase + Store接尾辞
-  - 例: `sessionStore.ts`, `settingsStore.ts`
+  - 例: `verticalSessionStore.ts`, `settingsStore.ts`
 - **サービス**: PascalCase + Service接尾辞
-  - 例: `SessionService.ts`, `StorageService.ts`
+  - 例: `RangeContentService.ts`, `StorageService.ts`
 - **ユーティリティ**: camelCase
-  - 例: `shuffle.ts`, `formatters.ts`
-- **定数**: camelCase
-  - 例: `colors.ts`, `config.ts`
-- **型定義**: camelCase
-  - 例: `video.ts`, `question.ts`
+  - 例: `constants.ts`, `errors.ts`
+- **型定義**: `index.ts`に統合
 
 ### テストファイル名
 
 - パターン: `[テスト対象].test.ts` または `[シナリオ].spec.ts`
-- 例: `SessionService.test.ts`, `learning-flow.spec.ts`
+- 例: `RangeContentService.test.ts`, `learning-flow.spec.ts`
 
 ---
 
@@ -282,18 +290,18 @@ tests/
 
 ```typescript
 // ❌ 悪い例: 循環依存
-// sessionStore.ts
-import { usePlayer } from '../hooks/usePlayer';
+// verticalSessionStore.ts
+import { usePlayerKeyboard } from '../hooks/usePlayerKeyboard';
 
-// usePlayer.ts
-import { useSessionStore } from '../stores/sessionStore';
+// usePlayerKeyboard.ts
+import { useVerticalSessionStore } from '../stores/verticalSessionStore';
 
 // ✅ 良い例: 依存方向を統一
-// usePlayer.ts（フックがストアに依存）
-import { useSessionStore } from '../stores/sessionStore';
+// usePlayerKeyboard.ts（フックがストアに依存）
+import { useVerticalSessionStore } from '../stores/verticalSessionStore';
 
-// sessionStore.ts（ストアは純粋な状態管理のみ）
-export const useSessionStore = create<SessionState>(...);
+// verticalSessionStore.ts（ストアは純粋な状態管理のみ）
+export const useVerticalSessionStore = create<VerticalSessionState>(...);
 ```
 
 ---

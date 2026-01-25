@@ -33,6 +33,9 @@ interface VerticalSessionState {
   // 統計用状態
   videoStatsMap: VideoStatsMap;
 
+  // 再生位置の状態
+  playbackPosition: number;            // 現在の動画の再生位置（秒）
+
   // アクション
   startSession: () => Promise<void>;
   startReviewSession: (videoIds: string[]) => void; // 復習マーク動画でセッション開始
@@ -43,6 +46,8 @@ interface VerticalSessionState {
   goPrev: () => void;
   goToIndex: (index: number) => void;
   clearSession: () => void;
+  savePlaybackPosition: (position: number) => void; // 再生位置を保存
+  saveSessionNow: () => void;          // 即座にセッション状態を保存
 
   // ヘルパー
   getCurrentVideo: () => VerticalVideo | null;
@@ -62,6 +67,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   weakVideoIdsAtStart: [],
   totalViewCountAtStart: 0,
   videoStatsMap: new Map(),
+  playbackPosition: 0,
 
   startSession: async () => {
     set({ isLoading: true, error: null });
@@ -126,9 +132,10 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       return false;
     }
 
-    // rangeStoreを更新
+    // rangeStoreを更新（selectedFolderIdsとorderModeの両方を復元）
     const rangeStore = useRangeStore.getState();
     rangeStore.setOrderMode(persisted.orderMode);
+    rangeStore.setSelectedFolderIds(persisted.selectedFolderIds);
 
     // セッション再開時の状態を記録
     const logStore = useLearningLogStore.getState();
@@ -145,6 +152,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       weakVideoIdsAtStart,
       totalViewCountAtStart,
       videoStatsMap: new Map(),
+      playbackPosition: persisted.playbackPosition ?? 0,
     });
 
     return true;
@@ -380,8 +388,29 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       weakVideoIdsAtStart: [],
       totalViewCountAtStart: 0,
       videoStatsMap: new Map(),
+      playbackPosition: 0,
     });
     SessionPersistenceService.clearSession();
+  },
+
+  savePlaybackPosition: (position: number) => {
+    set({ playbackPosition: position });
+  },
+
+  saveSessionNow: () => {
+    // 即座にセッション状態を保存（ページ離脱時など）
+    const { videos, currentIndex, playbackPosition } = get();
+    if (videos.length === 0) return;
+
+    const { selectedFolderIds, orderMode } = useRangeStore.getState();
+    SessionPersistenceService.saveSession({
+      videos,
+      currentIndex,
+      selectedFolderIds,
+      orderMode,
+      savedAt: Date.now(),
+      playbackPosition,
+    });
   },
 
   getCurrentVideo: () => {

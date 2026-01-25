@@ -14,6 +14,7 @@ import { usePlayerKeyboard } from '../hooks/usePlayerKeyboard';
 import { usePlayerWheel } from '../hooks/usePlayerWheel';
 import { useVideoPreload } from '../hooks/useVideoPreload';
 import { useVerticalSwipe } from '../hooks/useVerticalSwipe';
+import { usePageLifecycle } from '../hooks/usePageLifecycle';
 
 export function VerticalPlayerPage() {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ export function VerticalPlayerPage() {
     isLoading,
     error,
     pendingReview,
+    playbackPosition,
     startSession,
     startReviewSession,
     resumeSession,
@@ -40,6 +42,8 @@ export function VerticalPlayerPage() {
     getCurrentVideo,
     isComplete,
     getSessionStats,
+    savePlaybackPosition,
+    saveSessionNow,
   } = useVerticalSessionStore();
 
   // 設定から自動再生設定を取得
@@ -75,21 +79,36 @@ export function VerticalPlayerPage() {
   }, [sessionComplete, videos.length, getSessionStats, addHistory]);
 
   // セッション開始/復元
+  // リロード対応：まずセッション復元を試行し、失敗した場合のみ新規セッションを開始
+  const sessionInitializedRef = useRef(false);
+
   useEffect(() => {
-    if (videos.length === 0 && !isLoading) {
+    if (videos.length === 0 && !isLoading && !sessionInitializedRef.current) {
+      sessionInitializedRef.current = true;
+
+      // まず永続化セッションからの復元を試行
+      const resumed = resumeSession();
+      if (resumed) {
+        // 復元成功 → 何もしない
+        return;
+      }
+
+      // 復元失敗の場合
       if (selectedFolderIds.length > 0) {
         // 範囲選択からの遷移 → 新しいセッションを開始
         startSession();
       } else {
-        // ページ再読み込み or ホームからの続き → 永続化セッションからの復元を試行
-        const resumed = resumeSession();
-        if (!resumed) {
-          // 復元失敗（セッションなし）→ホームにリダイレクト
-          navigate('/');
-        }
+        // セッションなし、範囲選択もなし → ホームにリダイレクト
+        navigate('/');
       }
     }
   }, [videos.length, isLoading, selectedFolderIds.length, startSession, resumeSession, navigate]);
+
+  // ページ離脱時に状態を保存（リロード、タブ閉じる、アプリ切り替え等）
+  usePageLifecycle({
+    onBeforeUnload: saveSessionNow,
+    onVisibilityHidden: saveSessionNow,
+  });
 
   // 次の動画をプリロード
   useVideoPreload(videos, currentIndex);
@@ -104,6 +123,11 @@ export function VerticalPlayerPage() {
   const handleWatchProgressChange = useCallback((watched: boolean) => {
     hasWatchedEnoughRef.current = watched;
   }, []);
+
+  // 再生位置変更時のハンドラー
+  const handlePlaybackPositionChange = useCallback((position: number) => {
+    savePlaybackPosition(position);
+  }, [savePlaybackPosition]);
 
   // 動画完了時の処理（自動再生設定に応じて次へ進む）
   const handleVideoComplete = useCallback(() => {
@@ -338,6 +362,8 @@ export function VerticalPlayerPage() {
             onReviewPress={handleReviewPress}
             isReviewPressed={reviewPressed}
             onWatchProgressChange={handleWatchProgressChange}
+            initialPlaybackPosition={playbackPosition}
+            onPlaybackPositionChange={handlePlaybackPositionChange}
           />
         </div>
 
