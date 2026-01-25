@@ -56,11 +56,19 @@ interface ChartBarProps {
   index: number;
 }
 
+// 日付をYYYY-MM-DD形式で取得（ローカル時間）
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 function ChartBar({ stat, maxCount, index }: ChartBarProps) {
   const date = new Date(stat.date);
   const dayOfWeek = date.getDay();
   const dayLabel = DAY_LABELS[dayOfWeek];
-  const isToday = stat.date === new Date().toISOString().split('T')[0];
+  const isToday = stat.date === formatLocalDate(new Date());
 
   // バーの高さを計算（最小10%、最大100%）
   const heightPercent = stat.videoCount > 0

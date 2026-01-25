@@ -82,6 +82,7 @@ export function RangeSelectPage() {
   const learningRecords = useLearningLogStore((state) => state.records);
   const addRecord = useLearningLogStore((state) => state.addRecord);
   const getWeakVideoIds = useLearningLogStore((state) => state.getWeakVideoIds);
+  const getMasteredVideoIds = useLearningLogStore((state) => state.getMasteredVideoIds);
   const clearAllRecords = useLearningLogStore((state) => state.clearAllRecords);
 
   // リセット確認ダイアログの状態（0: 閉じ, 1: 1回目の確認, 2: 2回目の確認）
@@ -102,6 +103,11 @@ export function RangeSelectPage() {
   const weakFolderIds = useMemo(() => {
     return new Set(getWeakVideoIds());
   }, [getWeakVideoIds, learningRecords]); // recordsが変更されたら再計算
+
+  // 習得済みフォルダIDを取得
+  const masteredFolderIds = useMemo(() => {
+    return new Set(getMasteredVideoIds());
+  }, [getMasteredVideoIds, learningRecords]); // recordsが変更されたら再計算
 
   const handleStartLearning = () => {
     if (selectedFolderIds.length === 0) {
@@ -217,6 +223,7 @@ export function RangeSelectPage() {
                 folders={folders}
                 selectedFolderIds={selectedFolderIds}
                 completedFolderIds={completedFolderIds}
+                masteredFolderIds={masteredFolderIds}
                 weakFolderIds={weakFolderIds}
                 onToggle={toggleFolder}
                 onToggleChapter={toggleChapter}

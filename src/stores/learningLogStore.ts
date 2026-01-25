@@ -43,12 +43,17 @@ interface LearningLogState {
   getWeakVideoCount: () => number; // 苦手動画件数
   getResolvedWeakVideoIds: (previousWeakIds: string[]) => string[]; // 苦手解除された動画ID
   getTotalViewCount: () => number; // 累計視聴本数（ユニーク動画数）
+  getMasteredVideoIds: () => string[]; // 習得済み動画IDリスト
+  getMasteredVideoCount: () => number; // 習得済み動画件数
 }
 
-// 日付をYYYY-MM-DD形式で取得
+// 日付をYYYY-MM-DD形式で取得（ローカル時間）
 const getDateString = (timestamp: number): string => {
   const date = new Date(timestamp);
-  return date.toISOString().split('T')[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 // 今日の日付文字列を取得
@@ -169,6 +174,15 @@ export const useLearningLogStore = create<LearningLogState>()(
         const viewCompletedRecords = records.filter((r) => r.viewCompleted !== false);
         const uniqueVideoIds = new Set(viewCompletedRecords.map((r) => r.videoId));
         return uniqueVideoIds.size;
+      },
+
+      getMasteredVideoIds: (): string[] => {
+        const { records } = get();
+        return WeakVideoService.getMasteredVideoIds(records);
+      },
+
+      getMasteredVideoCount: (): number => {
+        return get().getMasteredVideoIds().length;
       },
     }),
     {

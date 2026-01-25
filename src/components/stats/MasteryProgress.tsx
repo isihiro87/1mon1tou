@@ -8,13 +8,10 @@ interface MasteryProgressProps {
 
 export function MasteryProgress({ className = '' }: MasteryProgressProps) {
   const records = useLearningLogStore((state) => state.records);
-  const getWeakVideoCount = useLearningLogStore((state) => state.getWeakVideoCount);
 
   const mastery = useMemo(() => {
     return StatsService.calculateMastery(records);
   }, [records]);
-
-  const weakCount = useMemo(() => getWeakVideoCount(), [getWeakVideoCount, records]);
 
   if (mastery.totalVideos === 0) {
     return (
@@ -32,7 +29,7 @@ export function MasteryProgress({ className = '' }: MasteryProgressProps) {
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-medium text-gray-600">習熟度</h3>
         <div className="text-xs text-gray-400">
-          {mastery.totalVideos}問を学習
+          {mastery.totalVideos}本を学習
         </div>
       </div>
 
@@ -42,26 +39,26 @@ export function MasteryProgress({ className = '' }: MasteryProgressProps) {
       {/* 内訳 */}
       <div className="flex justify-between mt-4">
         <MasteryItem
-          label="余裕"
-          count={mastery.perfectCount}
+          label="完璧"
+          count={mastery.masteredCount}
           total={mastery.totalVideos}
           color="text-green-500"
           bgColor="bg-green-100"
         />
         <MasteryItem
-          label="まあまあ"
-          count={mastery.unsureCount}
+          label="習得"
+          count={mastery.unmasteredCount}
           total={mastery.totalVideos}
-          color="text-yellow-500"
-          bgColor="bg-yellow-100"
+          color="text-blue-500"
+          bgColor="bg-blue-100"
         />
         <MasteryItem
           label="苦手"
-          count={weakCount}
+          count={mastery.weakCount}
           total={mastery.totalVideos}
           color="text-red-500"
           bgColor="bg-red-100"
-          showAlert={weakCount > 0}
+          showAlert={mastery.weakCount > 0}
         />
       </div>
     </div>
@@ -76,35 +73,28 @@ function MasteryBar({ mastery }: MasteryBarProps) {
   const total = mastery.totalVideos;
   if (total === 0) return null;
 
-  const perfectPercent = (mastery.perfectCount / total) * 100;
-  const unsurePercent = (mastery.unsureCount / total) * 100;
-  const badPercent = (mastery.badCount / total) * 100;
-  const noFeedbackPercent = (mastery.noFeedbackCount / total) * 100;
+  const masteredPercent = (mastery.masteredCount / total) * 100;
+  const unmasteredPercent = (mastery.unmasteredCount / total) * 100;
+  const weakPercent = (mastery.weakCount / total) * 100;
 
   return (
     <div className="h-4 bg-gray-100 rounded-full overflow-hidden flex">
-      {perfectPercent > 0 && (
+      {masteredPercent > 0 && (
         <div
           className="h-full bg-gradient-to-r from-green-400 to-green-500 transition-all duration-500"
-          style={{ width: `${perfectPercent}%` }}
+          style={{ width: `${masteredPercent}%` }}
         />
       )}
-      {unsurePercent > 0 && (
+      {unmasteredPercent > 0 && (
         <div
-          className="h-full bg-gradient-to-r from-yellow-300 to-yellow-400 transition-all duration-500"
-          style={{ width: `${unsurePercent}%` }}
+          className="h-full bg-gradient-to-r from-blue-300 to-blue-400 transition-all duration-500"
+          style={{ width: `${unmasteredPercent}%` }}
         />
       )}
-      {badPercent > 0 && (
+      {weakPercent > 0 && (
         <div
           className="h-full bg-gradient-to-r from-red-400 to-red-500 transition-all duration-500"
-          style={{ width: `${badPercent}%` }}
-        />
-      )}
-      {noFeedbackPercent > 0 && (
-        <div
-          className="h-full bg-gray-300 transition-all duration-500"
-          style={{ width: `${noFeedbackPercent}%` }}
+          style={{ width: `${weakPercent}%` }}
         />
       )}
     </div>

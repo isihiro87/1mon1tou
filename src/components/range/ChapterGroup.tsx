@@ -6,6 +6,7 @@ interface ChapterGroupProps {
   folders: RangeFolder[];
   selectedFolderIds: string[];
   completedFolderIds: Set<string>; // 学習済みフォルダID
+  masteredFolderIds: Set<string>;  // 習得済みフォルダID
   weakFolderIds: Set<string>; // 苦手フォルダID
   onToggle: (folderId: string) => void;
   onToggleChapter: (chapter: string) => void;
@@ -27,6 +28,7 @@ export function ChapterGroup({
   folders,
   selectedFolderIds,
   completedFolderIds,
+  masteredFolderIds,
   weakFolderIds,
   onToggle,
   onToggleChapter,
@@ -116,6 +118,7 @@ export function ChapterGroup({
             folder={folder}
             isSelected={selectedFolderIds.includes(folder.id)}
             isCompleted={completedFolderIds.has(folder.id)}
+            isMastered={masteredFolderIds.has(folder.id)}
             isWeak={weakFolderIds.has(folder.id)}
             onToggle={onToggle}
             onToggleWeak={onToggleWeak}

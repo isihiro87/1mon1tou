@@ -65,9 +65,13 @@ export class StorageService {
   static updateLongestStreak(currentStreak: number): void {
     const stored = this.getStreakData();
     if (currentStreak > stored.longestStreak) {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
       this.saveStreakData({
         longestStreak: currentStreak,
-        lastUpdated: new Date().toISOString().split('T')[0],
+        lastUpdated: `${year}-${month}-${day}`,
       });
     }
   }

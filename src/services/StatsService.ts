@@ -2,6 +2,8 @@
  * 学習統計の計算ロジックを提供するサービス
  */
 
+import { WeakVideoService } from './WeakVideoService';
+
 // 学習記録の型（learningLogStoreと同じ構造）
 interface LearningRecord {
   videoId: string;
@@ -10,6 +12,7 @@ interface LearningRecord {
   topic: string;
   feedback: 'perfect' | 'unsure' | 'bad' | null;
   timestamp: number;
+  viewCompleted?: boolean; // 視聴完了フラグ（50%以上視聴した場合のみtrue）
 }
 
 // 日別統計
@@ -28,10 +31,9 @@ export interface StreakData {
 // 習熟度データ
 export interface MasteryData {
   totalVideos: number;
-  perfectCount: number;
-  unsureCount: number;
-  badCount: number;
-  noFeedbackCount: number;
+  masteredCount: number;    // 習得済み（3回以上視聴＋3回連続non-bad）
+  unmasteredCount: number;  // 未習得（視聴済みだが習得条件未達）
+  weakCount: number;        // 苦手（最新視聴がbad）
 }
 
 // 章別習熟度
@@ -45,10 +47,13 @@ export interface ChapterMastery {
 
 export class StatsService {
   /**
-   * 日付をYYYY-MM-DD形式で取得
+   * 日付をYYYY-MM-DD形式で取得（ローカル時間）
    */
   private static formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   /**
@@ -77,13 +82,18 @@ export class StatsService {
 
   /**
    * 過去N日間の日別学習統計を計算
+   * viewCompleted !== false のレコードのみをカウント
    */
   static getDailyStats(records: LearningRecord[], days: number = 7): DailyLearningStats[] {
     const dateRange = this.generateDateRange(days);
     const countByDate = new Map<string, number>();
 
+    // viewCompleted !== false のレコードのみをフィルタ
+    // 後方互換性: viewCompletedがundefinedの場合（旧データ）もカウント対象
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
+
     // 日付ごとの学習回数をカウント
-    records.forEach((record) => {
+    completedRecords.forEach((record) => {
       const date = this.formatDate(new Date(record.timestamp));
       countByDate.set(date, (countByDate.get(date) || 0) + 1);
     });
@@ -97,11 +107,16 @@ export class StatsService {
 
   /**
    * 週別学習統計を計算（過去4週間）
+   * viewCompleted !== false のレコードのみをカウント
    */
   static getWeeklyStats(records: LearningRecord[]): { weekLabel: string; videoCount: number }[] {
     const weeks: { weekLabel: string; videoCount: number }[] = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    // viewCompleted !== false のレコードのみをフィルタ
+    // 後方互換性: viewCompletedがundefinedの場合（旧データ）もカウント対象
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
 
     for (let w = 0; w < 4; w++) {
       const weekEnd = new Date(today);
@@ -113,7 +128,7 @@ export class StatsService {
       const weekStartTime = weekStart.getTime();
       const weekEndTime = weekEnd.getTime() + 24 * 60 * 60 * 1000 - 1; // その日の終わりまで
 
-      const count = records.filter((r) => {
+      const count = completedRecords.filter((r) => {
         return r.timestamp >= weekStartTime && r.timestamp <= weekEndTime;
       }).length;
 
@@ -126,9 +141,14 @@ export class StatsService {
 
   /**
    * 連続学習日数（ストリーク）を計算
+   * viewCompleted !== false のレコードのみを対象
    */
   static calculateStreak(records: LearningRecord[]): StreakData {
-    if (records.length === 0) {
+    // viewCompleted !== false のレコードのみをフィルタ
+    // 後方互換性: viewCompletedがundefinedの場合（旧データ）もカウント対象
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
+
+    if (completedRecords.length === 0) {
       return {
         currentStreak: 0,
         longestStreak: 0,
@@ -138,7 +158,7 @@ export class StatsService {
 
     // 学習した日付のセットを作成
     const learningDates = new Set<string>();
-    records.forEach((record) => {
+    completedRecords.forEach((record) => {
       learningDates.add(this.formatDate(new Date(record.timestamp)));
     });
 
@@ -196,34 +216,40 @@ export class StatsService {
 
   /**
    * 習熟度を計算
+   * 「習得」「未習得」「苦手」の3分類
+   *
+   * - 習得: 3回以上視聴 かつ 3回連続でbadフィードバックがない
+   * - 苦手: 最新の視聴でbadフィードバック
+   * - 未習得: それ以外（視聴済みだが習得条件未達）
    */
   static calculateMastery(records: LearningRecord[]): MasteryData {
     const mastery: MasteryData = {
       totalVideos: 0,
-      perfectCount: 0,
-      unsureCount: 0,
-      badCount: 0,
-      noFeedbackCount: 0,
+      masteredCount: 0,
+      unmasteredCount: 0,
+      weakCount: 0,
     };
 
-    // ユニーク動画ごとの最新フィードバックを取得
-    const latestFeedbackByVideo = new Map<string, 'perfect' | 'unsure' | 'bad' | null>();
+    // viewCompleted !== false のレコードのみを対象
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
 
-    records.forEach((record) => {
-      // 同じ動画の場合は最新のフィードバックで上書き
-      latestFeedbackByVideo.set(record.videoId, record.feedback);
-    });
+    // ユニーク動画IDを取得
+    const uniqueVideoIds = new Set(completedRecords.map((r) => r.videoId));
 
-    latestFeedbackByVideo.forEach((feedback) => {
+    uniqueVideoIds.forEach((videoId) => {
       mastery.totalVideos++;
-      if (feedback === null) {
-        mastery.noFeedbackCount++;
-      } else if (feedback === 'perfect') {
-        mastery.perfectCount++;
-      } else if (feedback === 'unsure') {
-        mastery.unsureCount++;
-      } else if (feedback === 'bad') {
-        mastery.badCount++;
+
+      // 習得済みかチェック
+      if (WeakVideoService.isMasteredVideo(videoId, records)) {
+        mastery.masteredCount++;
+      }
+      // 苦手かチェック
+      else if (WeakVideoService.isWeakVideo(videoId, records)) {
+        mastery.weakCount++;
+      }
+      // それ以外は未習得
+      else {
+        mastery.unmasteredCount++;
       }
     });
 
@@ -237,10 +263,13 @@ export class StatsService {
     records: LearningRecord[],
     chapters: { chapter: string; displayName: string; totalVideos: number }[]
   ): ChapterMastery[] {
+    // viewCompleted !== false のレコードのみを対象
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
+
     // 章ごとにレコードをグループ化
     const recordsByChapter = new Map<string, LearningRecord[]>();
 
-    records.forEach((record) => {
+    completedRecords.forEach((record) => {
       const chapterRecords = recordsByChapter.get(record.chapter) || [];
       chapterRecords.push(record);
       recordsByChapter.set(record.chapter, chapterRecords);
@@ -255,7 +284,9 @@ export class StatsService {
         displayName: ch.displayName,
         viewedCount: uniqueVideoIds.size,
         totalCount: ch.totalVideos,
-        mastery: this.calculateMastery(chapterRecords),
+        // calculateMasteryには章内の全recordsを渡す（習得判定には全履歴が必要）
+        // ※calculateMastery内部でviewCompletedフィルタリングが実施される
+        mastery: this.calculateMastery(records.filter((r) => r.chapter === ch.chapter)),
       };
     });
   }

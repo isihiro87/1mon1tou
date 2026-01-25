@@ -8,10 +8,17 @@ interface LearningRecord {
   topic: string;
   feedback: FeedbackType | null;
   timestamp: number;
+  viewCompleted?: boolean; // 視聴完了フラグ（50%以上視聴した場合のみtrue）
 }
 
 // 苦手解除に必要な連続null回数
 export const WEAK_RESOLUTION_THRESHOLD = 2;
+
+// 習得に必要な視聴回数
+export const MASTERY_VIEW_COUNT_THRESHOLD = 3;
+
+// 習得に必要な連続non-bad回数
+export const MASTERY_CONSECUTIVE_NON_BAD = 3;
 
 // 苦手動画管理・スマート出題順サービス
 export class WeakVideoService {
@@ -179,6 +186,71 @@ export class WeakVideoService {
       const priorityB = this.calculatePriority(b.id, records);
       return priorityB - priorityA;
     });
+  }
+
+  /**
+   * 習得済みかどうか判定
+   *
+   * 習得条件:
+   * 1. 視聴完了回数が MASTERY_VIEW_COUNT_THRESHOLD (3回) 以上
+   * 2. 最新の MASTERY_CONSECUTIVE_NON_BAD (3回) 連続でbadフィードバックがない
+   *
+   * @param videoId - 動画ID
+   * @param records - 学習記録
+   * @returns 習得済みかどうか
+   */
+  static isMasteredVideo(videoId: string, records: LearningRecord[]): boolean {
+    // viewCompleted !== false のレコードのみを対象（視聴完了したもののみ）
+    // 後方互換性: viewCompletedがundefinedの場合（旧データ）も対象とする
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
+
+    // この動画の視聴完了レコードを時系列順（新しい順）に取得
+    const videoRecords = completedRecords
+      .filter((r) => r.videoId === videoId)
+      .sort((a, b) => b.timestamp - a.timestamp);
+
+    if (videoRecords.length < MASTERY_VIEW_COUNT_THRESHOLD) {
+      return false; // 視聴回数が足りない
+    }
+
+    // 最新N回の視聴で連続してbadがないか確認
+    let consecutiveNonBad = 0;
+    for (const record of videoRecords) {
+      if (record.feedback === 'bad') {
+        break; // badが見つかったら終了
+      }
+      consecutiveNonBad++;
+      if (consecutiveNonBad >= MASTERY_CONSECUTIVE_NON_BAD) {
+        return true; // 条件達成
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * 習得済み動画のIDリストを取得
+   *
+   * @param records - 学習記録
+   * @returns 習得済み動画IDの配列
+   */
+  static getMasteredVideoIds(records: LearningRecord[]): string[] {
+    // viewCompleted !== false のレコードのみを対象
+    // 後方互換性: viewCompletedがundefinedの場合（旧データ）も対象とする
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
+
+    // ユニークな動画IDを取得
+    const uniqueVideoIds = new Set(completedRecords.map((r) => r.videoId));
+
+    // 習得済みの動画IDを抽出
+    const masteredIds: string[] = [];
+    uniqueVideoIds.forEach((videoId) => {
+      if (this.isMasteredVideo(videoId, records)) {
+        masteredIds.push(videoId);
+      }
+    });
+
+    return masteredIds;
   }
 
   /**
