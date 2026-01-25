@@ -64,12 +64,12 @@
 
 ```javascript
 const firebaseConfig = {
-  apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  authDomain: "oneq-onea.firebaseapp.com",
-  projectId: "oneq-onea",
-  storageBucket: "oneq-onea.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456789"
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
 };
 ```
 
@@ -124,12 +124,12 @@ const firebaseConfig = {
 
 ```bash
 # Firebase設定
-VITE_FIREBASE_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-VITE_FIREBASE_AUTH_DOMAIN=oneq-onea.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=oneq-onea
-VITE_FIREBASE_STORAGE_BUCKET=oneq-onea.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789012
-VITE_FIREBASE_APP_ID=1:123456789012:web:abcdef123456789
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
 ```
 
 **注意点**:
@@ -218,6 +218,27 @@ http://localhost:5173/login
 2. シークレット/プライベートウィンドウで試す
 3. 別のブラウザで試す
 
+### 問題: 本番環境でログインボタンが表示されない
+
+**症状**: ローカルではログインボタンが表示されるが、本番環境（Vercel等）では表示されない
+
+**原因**: 本番環境に Firebase の環境変数が設定されていない
+
+**解説**:
+- ログインボタンは `isFirebaseConfigured()` が `true` の場合のみ表示される
+- この関数は `VITE_FIREBASE_API_KEY` 等の環境変数をチェックしている
+- Vercelにこれらの環境変数が未設定だと、ビルド時に空の値が展開される
+- 結果として `isConfigured = false` となり、ログインボタンが非表示になる
+
+**解決策**:
+1. 下記「補足: 本番環境へのデプロイ時」の「Vercelの場合（詳細手順）」に従って環境変数を設定
+2. **必ず再デプロイを実行**（環境変数はビルド時に展開されるため）
+
+**関連ファイル**:
+- `src/config/firebase.ts` - 環境変数の読み込み・設定チェック
+- `src/stores/authStore.ts` - `isConfigured` 状態の管理
+- `src/components/common/AuthStatusButton.tsx` - ログインボタンの表示条件
+
 ---
 
 ## 補足: 本番環境へのデプロイ時
@@ -235,13 +256,66 @@ http://localhost:5173/login
 
 デプロイ先のサービス（Vercel、Cloudflare Pagesなど）でも環境変数を設定する必要があります。
 
-**Vercelの場合**:
-1. プロジェクトの「Settings」→「Environment Variables」
-2. `.env.local`と同じ変数を追加
+**重要**: 環境変数はビルド時に展開されるため、設定後は**必ず再デプロイ**が必要です。
 
-**Cloudflare Pagesの場合**:
+---
+
+#### Vercelの場合（詳細手順）
+
+##### ステップ1: Vercelダッシュボードにアクセス
+
+1. [Vercel Dashboard](https://vercel.com/) にログイン
+2. デプロイしたプロジェクトを選択
+
+##### ステップ2: Environment Variablesを開く
+
+1. プロジェクトページ上部の「**Settings**」タブをクリック
+2. 左側メニューから「**Environment Variables**」をクリック
+
+##### ステップ3: 環境変数を追加
+
+以下の6つの変数を追加します:
+
+| Key | Value |
+|-----|-------|
+| `VITE_FIREBASE_API_KEY` | Firebaseコンソールから取得したapiKey |
+| `VITE_FIREBASE_AUTH_DOMAIN` | `your-project.firebaseapp.com` |
+| `VITE_FIREBASE_PROJECT_ID` | `your-project-id` |
+| `VITE_FIREBASE_STORAGE_BUCKET` | `your-project.appspot.com` |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebaseコンソールから取得 |
+| `VITE_FIREBASE_APP_ID` | Firebaseコンソールから取得 |
+
+**追加手順**:
+1. 「Key」フィールドに変数名（例: `VITE_FIREBASE_API_KEY`）を入力
+2. 「Value」フィールドに値を入力
+3. 「Environment」は**すべてチェック**（Production, Preview, Development）
+4. 「Add」ボタンをクリック
+5. 上記を6つの変数すべてに対して繰り返す
+
+##### ステップ4: 再デプロイ
+
+環境変数の変更を反映するには再デプロイが必要です:
+
+1. プロジェクトページ上部の「**Deployments**」タブをクリック
+2. 最新のデプロイの右側「**...**」メニューをクリック
+3. 「**Redeploy**」を選択
+4. 「Redeploy」ボタンをクリックして確定
+
+##### ステップ5: 動作確認
+
+再デプロイ完了後:
+
+1. 本番サイトにアクセス
+2. ホームページにログインボタン（ユーザーアイコン）が表示されることを確認
+3. ログインボタンをクリックし、Googleログインが機能することを確認
+
+---
+
+#### Cloudflare Pagesの場合
+
 1. プロジェクトの「Settings」→「Environment variables」
 2. Production/Previewそれぞれに変数を追加
+3. 再デプロイを実行
 
 ---
 
