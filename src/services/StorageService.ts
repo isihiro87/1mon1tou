@@ -1,6 +1,17 @@
-import type { UserSettings, Session, LearningLog } from '../types';
+import type { UserSettings } from '../types';
 import { STORAGE_KEYS, DEFAULT_SETTINGS } from '../utils/constants';
 import { StorageError } from '../utils/errors';
+
+// ストリークデータの型
+export interface PersistedStreakData {
+  longestStreak: number;
+  lastUpdated: string; // YYYY-MM-DD
+}
+
+const DEFAULT_STREAK_DATA: PersistedStreakData = {
+  longestStreak: 0,
+  lastUpdated: '',
+};
 
 export class StorageService {
   // ===========================
@@ -28,74 +39,36 @@ export class StorageService {
   }
 
   // ===========================
-  // Session
+  // Streak Data
   // ===========================
 
-  static saveSession(session: Session): void {
+  static saveStreakData(data: PersistedStreakData): void {
     try {
-      localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session));
+      localStorage.setItem(STORAGE_KEYS.STREAK_DATA, JSON.stringify(data));
     } catch {
-      throw new StorageError(
-        'セッションの保存に失敗しました',
-        STORAGE_KEYS.SESSION
-      );
+      throw new StorageError('ストリークデータの保存に失敗しました', STORAGE_KEYS.STREAK_DATA);
     }
   }
 
-  static getSession(): Session | null {
+  static getStreakData(): PersistedStreakData {
     try {
-      const data = localStorage.getItem(STORAGE_KEYS.SESSION);
+      const data = localStorage.getItem(STORAGE_KEYS.STREAK_DATA);
       if (!data) {
-        return null;
+        return DEFAULT_STREAK_DATA;
       }
-      return JSON.parse(data) as Session;
+      return JSON.parse(data) as PersistedStreakData;
     } catch {
-      return null;
+      return DEFAULT_STREAK_DATA;
     }
   }
 
-  static clearSession(): void {
-    try {
-      localStorage.removeItem(STORAGE_KEYS.SESSION);
-    } catch {
-      // Ignore errors when clearing
-    }
-  }
-
-  // ===========================
-  // Learning Logs
-  // ===========================
-
-  static saveLearningLog(log: LearningLog): void {
-    try {
-      const logs = this.getLearningLogs();
-      logs.push(log);
-      localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify(logs));
-    } catch {
-      throw new StorageError(
-        '学習ログの保存に失敗しました',
-        STORAGE_KEYS.LOGS
-      );
-    }
-  }
-
-  static getLearningLogs(): LearningLog[] {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.LOGS);
-      if (!data) {
-        return [];
-      }
-      return JSON.parse(data) as LearningLog[];
-    } catch {
-      return [];
-    }
-  }
-
-  static clearLearningLogs(): void {
-    try {
-      localStorage.removeItem(STORAGE_KEYS.LOGS);
-    } catch {
-      // Ignore errors when clearing
+  static updateLongestStreak(currentStreak: number): void {
+    const stored = this.getStreakData();
+    if (currentStreak > stored.longestStreak) {
+      this.saveStreakData({
+        longestStreak: currentStreak,
+        lastUpdated: new Date().toISOString().split('T')[0],
+      });
     }
   }
 }

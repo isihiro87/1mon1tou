@@ -1,9 +1,11 @@
 import { useMemo, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/common/Button';
+import { AuthStatusButton } from '../components/common/AuthStatusButton';
 import { WeakReviewButton } from '../components/home/WeakReviewButton';
 import { ContinueButton } from '../components/home/ContinueButton';
 import { LearningHistorySection } from '../components/home/LearningHistorySection';
+import { StreakDisplay } from '../components/stats/StreakDisplay';
 import { useLearningLogStore } from '../stores/learningLogStore';
 import { useRangeStore } from '../stores/rangeStore';
 import { useVerticalSessionStore } from '../stores/verticalSessionStore';
@@ -84,22 +86,41 @@ export function HomePage() {
     }
   }, [resumeSession, navigate]);
 
+  // 統計画面へ
+  const handleOpenStats = useCallback(() => {
+    navigate('/stats');
+  }, [navigate]);
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* ヘッダーエリア */}
-      <div className="pt-8 pb-4 px-6 text-center">
-        <h1 className="text-3xl font-bold text-blue-600 mb-1">OneQ-OneA</h1>
-        <p className="text-base text-gray-500">一問一答で学ぼう！</p>
+      <div className="pt-4 pb-4 px-4">
+        {/* 上部バー: ログイン状態 */}
+        <div className="flex justify-end mb-4">
+          <AuthStatusButton />
+        </div>
+        {/* タイトル */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-blue-600 mb-1">OneQ-OneA</h1>
+          <p className="text-base text-gray-500">一問一答で学ぼう！</p>
+        </div>
       </div>
 
       {/* 今日の学習カード */}
       <div className="px-6 mb-6">
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+        <button
+          type="button"
+          onClick={handleOpenStats}
+          className="w-full bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-left hover:bg-gray-50 transition-colors"
+        >
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-medium text-gray-600">今日の学習</h3>
-            <span className="text-xs text-gray-400">
-              {new Date().toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })}
-            </span>
+            <div className="flex items-center gap-2">
+              <StreakDisplay variant="compact" />
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
 
           {todayStats.videoCount > 0 ? (
@@ -144,7 +165,7 @@ export function HomePage() {
               <p className="text-gray-300 text-xs mt-1">今日も頑張ろう！</p>
             </div>
           )}
-        </div>
+        </button>
       </div>
 
       {/* 学習履歴セクション */}
