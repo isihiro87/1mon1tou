@@ -62,6 +62,7 @@ export function VerticalVideoPlayer({
         autoPlay
         playsInline
         onEnded={handleEnded}
+        onClick={(e) => e.stopPropagation()}
       >
         お使いのブラウザは動画再生に対応していません。
       </video>
