@@ -18,7 +18,7 @@ export function StatsPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Header title="学習統計" onBack={handleBack} />
+      <Header title="学習統計" showBack onBack={handleBack} />
 
       <main className="flex-1 px-4 py-4 pb-8 space-y-4">
         {/* ストリーク表示 */}

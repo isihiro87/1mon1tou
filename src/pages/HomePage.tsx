@@ -36,8 +36,10 @@ export function HomePage() {
   // 今日の統計を計算（recordsが変更された時のみ再計算）
   const todayStats = useMemo(() => {
     const today = getDateString(Date.now());
+    // viewCompleted !== false のレコードのみを視聴完了としてカウント
+    // （後方互換性: viewCompletedがundefinedの旧データも対象）
     const todayRecords = records.filter(
-      (r) => getDateString(r.timestamp) === today
+      (r) => getDateString(r.timestamp) === today && r.viewCompleted !== false
     );
 
     const feedbackCounts = {

@@ -254,6 +254,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
       chapter: currentVideo.chapter,
       topic: currentVideo.topic,
       feedback: 'bad',  // 復習ボタン = 苦手判定
+      viewCompleted: false,  // 苦手ボタン操作は視聴完了としてカウントしない
     });
 
     set({
@@ -265,8 +266,8 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
   },
 
   unmarkCurrentAsWeak: () => {
-    // 復習ボタンが解除されたときに呼ばれる
-    // pendingReviewをクリアする
+    // 苦手マークが解除されたときに呼ばれる
+    // pendingReviewをクリアし、学習ログに解除を記録する
     const { videos, currentIndex, pendingReview, videoStatsMap } = get();
     const currentVideo = videos[currentIndex];
 
@@ -281,6 +282,16 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
     if (existingStats && existingStats.reviewCount > 0) {
       existingStats.reviewCount -= 1;
     }
+
+    // 学習ログに苦手解除を記録（feedback: nullで上書き）
+    useLearningLogStore.getState().addRecord({
+      videoId: currentVideo.id,
+      displayName: currentVideo.displayName,
+      chapter: currentVideo.chapter,
+      topic: currentVideo.topic,
+      feedback: null,  // 苦手マーク解除
+      viewCompleted: false,  // 苦手ボタン解除は視聴完了としてカウントしない
+    });
 
     set({
       pendingReview: null,
@@ -308,6 +319,7 @@ export const useVerticalSessionStore = create<VerticalSessionState>((set, get) =
         chapter: currentVideo.chapter,
         topic: currentVideo.topic,
         feedback: null,  // 復習ボタンを押していない場合はnull
+        viewCompleted: true,  // 視聴完了フラグ
       });
 
       // 統計を記録（viewCountを増加）

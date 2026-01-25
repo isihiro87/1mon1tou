@@ -11,6 +11,7 @@ interface LearningRecord {
   topic: string;
   feedback: FeedbackType | null; // フィードバック無効時はnull
   timestamp: number;
+  viewCompleted?: boolean; // 視聴完了フラグ（50%以上視聴した場合のみtrue）
 }
 
 // 日別の学習サマリー
@@ -32,6 +33,7 @@ interface LearningLogState {
   // アクション
   addRecord: (record: Omit<LearningRecord, 'timestamp'>) => void;
   clearOldRecords: () => void;
+  clearAllRecords: () => void; // 全記録をリセット
 
   // ヘルパー
   getTodayStats: () => DailyStats;
@@ -80,12 +82,18 @@ export const useLearningLogStore = create<LearningLogState>()(
         }));
       },
 
+      clearAllRecords: () => {
+        set({ records: [] });
+      },
+
       getTodayStats: (): DailyStats => {
         const today = getTodayString();
         const { records } = get();
 
+        // viewCompleted !== false のレコードのみを視聴完了としてカウント
+        // （後方互換性: viewCompletedがundefinedの旧データも対象）
         const todayRecords = records.filter(
-          (r) => getDateString(r.timestamp) === today
+          (r) => getDateString(r.timestamp) === today && r.viewCompleted !== false
         );
 
         const feedbackCounts = {
@@ -114,9 +122,13 @@ export const useLearningLogStore = create<LearningLogState>()(
         const { records } = get();
         const map = new Map<string, boolean>();
 
-        records.forEach((r) => {
-          map.set(r.videoId, true);
-        });
+        // viewCompleted=trueのレコードのみを対象
+        // 後方互換性: viewCompletedがundefinedの場合（旧データ）も対象とする
+        records
+          .filter((r) => r.viewCompleted !== false)
+          .forEach((r) => {
+            map.set(r.videoId, true);
+          });
 
         return map;
       },
@@ -152,8 +164,10 @@ export const useLearningLogStore = create<LearningLogState>()(
 
       getTotalViewCount: (): number => {
         const { records } = get();
-        // ユニークな動画IDの数をカウント
-        const uniqueVideoIds = new Set(records.map((r) => r.videoId));
+        // viewCompleted=trueのレコードのみを対象に、ユニークな動画IDの数をカウント
+        // 後方互換性: viewCompletedがundefinedの場合（旧データ）もカウント対象とする
+        const viewCompletedRecords = records.filter((r) => r.viewCompleted !== false);
+        const uniqueVideoIds = new Set(viewCompletedRecords.map((r) => r.videoId));
         return uniqueVideoIds.size;
       },
     }),

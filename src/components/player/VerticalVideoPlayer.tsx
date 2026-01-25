@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect } from 'react';
 import type { VerticalVideo } from '../../types';
-import { ReviewButton } from './ReviewButton';
+import { WeakButton } from './WeakButton';
 import { useVideoWatchProgress } from '../../hooks/useVideoWatchProgress';
 
 interface VerticalVideoPlayerProps {
@@ -137,10 +137,12 @@ export function VerticalVideoPlayer({
         お使いのブラウザは動画再生に対応していません。
       </video>
 
-      {/* 復習ボタン（左下に配置） */}
-      <div className="absolute bottom-20 left-4 z-20">
-        <ReviewButton onPress={onReviewPress} isPressed={isReviewPressed} />
-      </div>
+      {/* 苦手ボタン（左下に配置、50%以上視聴後に表示） */}
+      {hasWatchedEnough && (
+        <div className="absolute bottom-20 left-4 z-20">
+          <WeakButton onPress={onReviewPress} isPressed={isReviewPressed} />
+        </div>
+      )}
     </div>
   );
 }

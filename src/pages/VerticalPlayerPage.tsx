@@ -70,11 +70,14 @@ export function VerticalPlayerPage() {
     if (sessionComplete && videos.length > 0 && !hasLoggedHistoryRef.current) {
       hasLoggedHistoryRef.current = true;
       const stats = getSessionStats();
-      addHistory({
-        completedAt: Date.now(),
-        totalViews: stats.totalViews,
-        reviewMarkCount: stats.totalFeedbacks.bad,
-      });
+      // 0本視聴のセッションは履歴に記録しない
+      if (stats.totalViews > 0) {
+        addHistory({
+          completedAt: Date.now(),
+          totalViews: stats.totalViews,
+          reviewMarkCount: stats.totalFeedbacks.bad,
+        });
+      }
     }
   }, [sessionComplete, videos.length, getSessionStats, addHistory]);
 

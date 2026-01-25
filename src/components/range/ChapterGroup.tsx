@@ -6,8 +6,10 @@ interface ChapterGroupProps {
   folders: RangeFolder[];
   selectedFolderIds: string[];
   completedFolderIds: Set<string>; // 学習済みフォルダID
+  weakFolderIds: Set<string>; // 苦手フォルダID
   onToggle: (folderId: string) => void;
   onToggleChapter: (chapter: string) => void;
+  onToggleWeak: (folder: RangeFolder) => void;
 }
 
 // 章名を日本語に変換
@@ -25,8 +27,10 @@ export function ChapterGroup({
   folders,
   selectedFolderIds,
   completedFolderIds,
+  weakFolderIds,
   onToggle,
   onToggleChapter,
+  onToggleWeak,
 }: ChapterGroupProps) {
   const selectedCount = folders.filter(f => selectedFolderIds.includes(f.id)).length;
   const isAllSelected = selectedCount === folders.length;
@@ -35,6 +39,9 @@ export function ChapterGroup({
   // 完了率を計算
   const completedCount = folders.filter(f => completedFolderIds.has(f.id)).length;
   const completionRate = Math.round((completedCount / folders.length) * 100);
+
+  // 苦手件数を計算
+  const weakCount = folders.filter(f => weakFolderIds.has(f.id)).length;
 
   const handleChapterClick = () => {
     onToggleChapter(chapter);
@@ -83,6 +90,11 @@ export function ChapterGroup({
             </span>
           </div>
         </div>
+        {weakCount > 0 && (
+          <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-600">
+            苦手{weakCount}件
+          </span>
+        )}
         <span
           className={`text-xs px-2 py-0.5 rounded-full ${
             isAllSelected
@@ -103,7 +115,10 @@ export function ChapterGroup({
             key={folder.id}
             folder={folder}
             isSelected={selectedFolderIds.includes(folder.id)}
+            isCompleted={completedFolderIds.has(folder.id)}
+            isWeak={weakFolderIds.has(folder.id)}
             onToggle={onToggle}
+            onToggleWeak={onToggleWeak}
           />
         ))}
       </div>
