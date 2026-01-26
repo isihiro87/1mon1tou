@@ -16,6 +16,8 @@ export interface Subject {
 
 export interface UserSettings {
   autoPlayNextVideo: boolean;    // 動画終了後に自動で次の動画へ
+  dailyGoal: number;             // 1日の目標動画本数（0で無効）
+  weeklyGoal: number;            // 週間の目標動画本数（0で無効）
 }
 
 // デフォルト値は src/utils/constants.ts で定義

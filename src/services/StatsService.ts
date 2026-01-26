@@ -3,6 +3,8 @@
  */
 
 import { WeakVideoService } from './WeakVideoService';
+import type { UserSettings } from '../types';
+import { StorageService, type GoalAchievementLog } from './StorageService';
 
 // 学習記録の型（learningLogStoreと同じ構造）
 interface LearningRecord {
@@ -45,6 +47,16 @@ export interface ChapterMastery {
   mastery: MasteryData;
 }
 
+// 目標達成結果
+export interface GoalAchievementResult {
+  dailyAchieved: boolean;         // 日次目標を今回達成したか
+  weeklyAchieved: boolean;        // 週間目標を今回達成したか
+  dailyProgress: number;          // 今日の視聴本数
+  weeklyProgress: number;         // 今週の視聴本数
+  dailyGoal: number;              // 日次目標
+  weeklyGoal: number;             // 週間目標
+}
+
 export class StatsService {
   /**
    * 日付をYYYY-MM-DD形式で取得（ローカル時間）
@@ -59,7 +71,7 @@ export class StatsService {
   /**
    * 今日の日付文字列を取得
    */
-  private static getTodayString(): string {
+  static getTodayString(): string {
     return this.formatDate(new Date());
   }
 
@@ -257,6 +269,46 @@ export class StatsService {
   }
 
   /**
+   * 今日の視聴本数を取得
+   */
+  static getTodayViewCount(records: LearningRecord[]): number {
+    const today = this.getTodayString();
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
+    return completedRecords.filter((r) => this.formatDate(new Date(r.timestamp)) === today).length;
+  }
+
+  /**
+   * ISO週番号を取得（YYYY-WW形式）
+   */
+  static getWeekNumber(date: Date): string {
+    const target = new Date(date.valueOf());
+    // 木曜日を基準にISO週番号を計算
+    const dayNr = (date.getDay() + 6) % 7;
+    target.setDate(target.getDate() - dayNr + 3);
+    const firstThursday = target.valueOf();
+    target.setMonth(0, 1);
+    if (target.getDay() !== 4) {
+      target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7));
+    }
+    const weekNumber = 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
+    const year = date.getFullYear();
+    return `${year}-${String(weekNumber).padStart(2, '0')}`;
+  }
+
+  /**
+   * 今週の視聴本数を取得
+   */
+  static getThisWeekViewCount(records: LearningRecord[]): number {
+    const today = new Date();
+    const currentWeek = this.getWeekNumber(today);
+    const completedRecords = records.filter((r) => r.viewCompleted !== false);
+    return completedRecords.filter((r) => {
+      const recordDate = new Date(r.timestamp);
+      return this.getWeekNumber(recordDate) === currentWeek;
+    }).length;
+  }
+
+  /**
    * 章別の習熟度を計算
    */
   static calculateChapterMastery(
@@ -289,5 +341,55 @@ export class StatsService {
         mastery: this.calculateMastery(records.filter((r) => r.chapter === ch.chapter)),
       };
     });
+  }
+
+  /**
+   * 目標達成を判定し、新規達成かどうかを返す
+   * @param records 学習記録
+   * @param settings ユーザー設定（目標値を含む）
+   * @returns 目標達成結果
+   */
+  static checkGoalAchievement(
+    records: LearningRecord[],
+    settings: UserSettings
+  ): GoalAchievementResult {
+    const { dailyGoal, weeklyGoal } = settings;
+    const dailyProgress = this.getTodayViewCount(records);
+    const weeklyProgress = this.getThisWeekViewCount(records);
+
+    // 達成ログを取得
+    const achievementLog = StorageService.getGoalAchievementLog();
+    const today = this.getTodayString();
+    const currentWeek = this.getWeekNumber(new Date());
+
+    // 日次目標達成判定（目標が設定されている且つ達成且つ未報告）
+    const dailyAchieved =
+      dailyGoal > 0 &&
+      dailyProgress >= dailyGoal &&
+      achievementLog.lastDailyAchievement !== today;
+
+    // 週間目標達成判定（目標が設定されている且つ達成且つ未報告）
+    const weeklyAchieved =
+      weeklyGoal > 0 &&
+      weeklyProgress >= weeklyGoal &&
+      achievementLog.lastWeeklyAchievement !== currentWeek;
+
+    // 達成時はログを更新
+    if (dailyAchieved || weeklyAchieved) {
+      const newLog: GoalAchievementLog = {
+        lastDailyAchievement: dailyAchieved ? today : achievementLog.lastDailyAchievement,
+        lastWeeklyAchievement: weeklyAchieved ? currentWeek : achievementLog.lastWeeklyAchievement,
+      };
+      StorageService.saveGoalAchievementLog(newLog);
+    }
+
+    return {
+      dailyAchieved,
+      weeklyAchieved,
+      dailyProgress,
+      weeklyProgress,
+      dailyGoal,
+      weeklyGoal,
+    };
   }
 }

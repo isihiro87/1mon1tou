@@ -6,11 +6,14 @@ export const STORAGE_KEYS = {
   PERSISTED_SESSION: 'oneq_persisted_session',
   SESSION_HISTORY: 'oneq_session_history',
   STREAK_DATA: 'oneq_streak_data',
+  GOAL_ACHIEVEMENT_LOG: 'oneq_goal_achievement_log',
 } as const;
 
 // デフォルト設定値
 export const DEFAULT_SETTINGS: UserSettings = {
   autoPlayNextVideo: true,
+  dailyGoal: 0,    // 0 = 目標無効
+  weeklyGoal: 0,   // 0 = 目標無効
 };
 
 // 科目リスト
@@ -31,6 +34,12 @@ export const REVIEW_DELAY_VIDEOS = 1;
 export const CONTENT_PATHS = {
   VIDEOS: '/content/videos.json',
   QUESTIONS: '/content/questions.json',
+} as const;
+
+// 目標設定の制限値
+export const GOAL_LIMITS = {
+  MIN: 0,
+  MAX: 100,
 } as const;
 
 // マイルストーン定義（累計視聴本数）

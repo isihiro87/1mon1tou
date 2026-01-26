@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AutoNextToggle } from '../components/settings/AutoNextToggle';
+import { GoalSettingSection } from '../components/settings/GoalSettingSection';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/common/Button';
@@ -138,6 +139,17 @@ export function SettingsPage() {
               ONにすると、動画視聴完了時に自動的に次の動画へ進みます。
             </p>
           </div>
+        </div>
+
+        {/* 目標設定セクション */}
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+          <h2 className="text-sm font-medium text-gray-500 mb-3">目標設定</h2>
+          <GoalSettingSection
+            dailyGoal={settings.dailyGoal ?? 0}
+            weeklyGoal={settings.weeklyGoal ?? 0}
+            onDailyGoalChange={(value) => updateSettings({ dailyGoal: value })}
+            onWeeklyGoalChange={(value) => updateSettings({ weeklyGoal: value })}
+          />
         </div>
 
         {/* ヘルプセクション */}

@@ -13,6 +13,17 @@ const DEFAULT_STREAK_DATA: PersistedStreakData = {
   lastUpdated: '',
 };
 
+// 目標達成ログの型
+export interface GoalAchievementLog {
+  lastDailyAchievement: string | null;  // YYYY-MM-DD形式
+  lastWeeklyAchievement: string | null; // YYYY-WW形式（ISO週番号）
+}
+
+const DEFAULT_GOAL_ACHIEVEMENT_LOG: GoalAchievementLog = {
+  lastDailyAchievement: null,
+  lastWeeklyAchievement: null,
+};
+
 export class StorageService {
   // ===========================
   // Settings
@@ -73,6 +84,30 @@ export class StorageService {
         longestStreak: currentStreak,
         lastUpdated: `${year}-${month}-${day}`,
       });
+    }
+  }
+
+  // ===========================
+  // Goal Achievement Log
+  // ===========================
+
+  static saveGoalAchievementLog(log: GoalAchievementLog): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.GOAL_ACHIEVEMENT_LOG, JSON.stringify(log));
+    } catch {
+      throw new StorageError('目標達成ログの保存に失敗しました', STORAGE_KEYS.GOAL_ACHIEVEMENT_LOG);
+    }
+  }
+
+  static getGoalAchievementLog(): GoalAchievementLog {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.GOAL_ACHIEVEMENT_LOG);
+      if (!data) {
+        return DEFAULT_GOAL_ACHIEVEMENT_LOG;
+      }
+      return JSON.parse(data) as GoalAchievementLog;
+    } catch {
+      return DEFAULT_GOAL_ACHIEVEMENT_LOG;
     }
   }
 }

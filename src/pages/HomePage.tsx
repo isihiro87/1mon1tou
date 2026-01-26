@@ -5,11 +5,14 @@ import { AuthStatusButton } from '../components/common/AuthStatusButton';
 import { WeakReviewButton } from '../components/home/WeakReviewButton';
 import { ContinueButton } from '../components/home/ContinueButton';
 import { LearningHistorySection } from '../components/home/LearningHistorySection';
+import { GoalProgressCard } from '../components/home/GoalProgressCard';
 import { StreakDisplay } from '../components/stats/StreakDisplay';
 import { useLearningLogStore } from '../stores/learningLogStore';
 import { useRangeStore } from '../stores/rangeStore';
 import { useVerticalSessionStore } from '../stores/verticalSessionStore';
+import { useSettingsStore } from '../stores/settingsStore';
 import { SessionPersistenceService, type PersistedSession } from '../services/SessionPersistenceService';
+import { StatsService } from '../services/StatsService';
 
 // 日付をYYYY-MM-DD形式で取得（ローカル時間）
 const getDateString = (timestamp: number): string => {
@@ -27,6 +30,12 @@ export function HomePage() {
   const setSelectedFolderIds = useRangeStore((state) => state.setSelectedFolderIds);
   const setOrderMode = useRangeStore((state) => state.setOrderMode);
   const resumeSession = useVerticalSessionStore((state) => state.resumeSession);
+  const { settings, loadSettings } = useSettingsStore();
+
+  // 設定を読み込み
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
 
   // 前回セッションの有無をチェック
   const [persistedSession, setPersistedSession] = useState<PersistedSession | null>(null);
@@ -70,6 +79,12 @@ export function HomePage() {
   // 苦手動画の件数を計算
   const weakVideoIds = useMemo(() => getWeakVideoIds(), [getWeakVideoIds, records]);
   const weakCount = weakVideoIds.length;
+
+  // 目標進捗を計算
+  const goalProgress = useMemo(() => ({
+    dailyProgress: StatsService.getTodayViewCount(records),
+    weeklyProgress: StatsService.getThisWeekViewCount(records),
+  }), [records]);
 
   const handleStartLearning = useCallback(() => {
     navigate('/range-select');
@@ -171,6 +186,16 @@ export function HomePage() {
             </div>
           )}
         </button>
+      </div>
+
+      {/* 目標進捗カード */}
+      <div className="px-6 mb-4">
+        <GoalProgressCard
+          dailyGoal={settings.dailyGoal ?? 0}
+          weeklyGoal={settings.weeklyGoal ?? 0}
+          dailyProgress={goalProgress.dailyProgress}
+          weeklyProgress={goalProgress.weeklyProgress}
+        />
       </div>
 
       {/* 学習履歴セクション */}

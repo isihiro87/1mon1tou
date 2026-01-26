@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState, useRef } from 'react';
+import { useEffect, useCallback, useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { VerticalVideoPlayer } from '../components/player/VerticalVideoPlayer';
 import { ReviewToast } from '../components/player/ReviewToast';
@@ -10,11 +10,13 @@ import { useVerticalSessionStore } from '../stores/verticalSessionStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useSessionHistoryStore } from '../stores/sessionHistoryStore';
 import { useRangeStore } from '../stores/rangeStore';
+import { useLearningLogStore } from '../stores/learningLogStore';
 import { usePlayerKeyboard } from '../hooks/usePlayerKeyboard';
 import { usePlayerWheel } from '../hooks/usePlayerWheel';
 import { useVideoPreload } from '../hooks/useVideoPreload';
 import { useVerticalSwipe } from '../hooks/useVerticalSwipe';
 import { usePageLifecycle } from '../hooks/usePageLifecycle';
+import { StatsService } from '../services/StatsService';
 
 export function VerticalPlayerPage() {
   const navigate = useNavigate();
@@ -46,8 +48,12 @@ export function VerticalPlayerPage() {
     saveSessionNow,
   } = useVerticalSessionStore();
 
-  // 設定から自動再生設定を取得
-  const autoPlayNextVideo = useSettingsStore((state) => state.settings.autoPlayNextVideo);
+  // 設定から自動再生設定と目標を取得
+  const settings = useSettingsStore((state) => state.settings);
+  const autoPlayNextVideo = settings.autoPlayNextVideo;
+
+  // 学習ログを取得（目標達成判定用）
+  const learningRecords = useLearningLogStore((state) => state.records);
 
   // セッション履歴を追加する関数
   const addHistory = useSessionHistoryStore((state) => state.addHistory);
@@ -259,6 +265,14 @@ export function VerticalPlayerPage() {
   const prevVideo = currentIndex > 0 ? videos[currentIndex - 1] : null;
   const nextVideo = currentIndex < videos.length - 1 ? videos[currentIndex + 1] : null;
 
+  // 目標達成判定（セッション完了時に実行）
+  const goalAchievement = useMemo(() => {
+    if (videos.length > 0 && sessionComplete) {
+      return StatsService.checkGoalAchievement(learningRecords, settings);
+    }
+    return undefined;
+  }, [videos.length, sessionComplete, learningRecords, settings]);
+
   // 完了画面（全動画視聴後）
   if (videos.length > 0 && sessionComplete) {
     const stats = getSessionStats();
@@ -280,6 +294,7 @@ export function VerticalPlayerPage() {
         resolvedWeakVideos={resolvedWeakVideos}
         completedChapters={stats.completedChapters}
         achievedMilestones={stats.achievedMilestones}
+        goalAchievement={goalAchievement}
         onRestart={handleRestart}
         onChangeRange={handleChangeRange}
         onGoHome={handleGoHome}

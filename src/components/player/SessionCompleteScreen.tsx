@@ -1,4 +1,5 @@
 import type { SessionStatsData, Milestone } from '../../types';
+import type { GoalAchievementResult } from '../../services/StatsService';
 import { Button } from '../common/Button';
 
 // 苦手解除動画の情報
@@ -12,6 +13,7 @@ interface SessionCompleteScreenProps {
   resolvedWeakVideos: ResolvedWeakVideo[];  // 苦手解除された動画リスト
   completedChapters: string[];              // 完了した章
   achievedMilestones: Milestone[];          // 達成したマイルストーン
+  goalAchievement?: GoalAchievementResult;  // 目標達成結果
   onRestart: () => void;
   onChangeRange: () => void;
   onGoHome: () => void;
@@ -73,6 +75,7 @@ export function SessionCompleteScreen({
   resolvedWeakVideos,
   completedChapters,
   achievedMilestones,
+  goalAchievement,
   onRestart,
   onChangeRange,
   onGoHome,
@@ -85,6 +88,7 @@ export function SessionCompleteScreen({
   const hasResolvedWeak = resolvedWeakVideos.length > 0;
   const hasCompletedChapters = completedChapters.length > 0;
   const hasAchievedMilestones = achievedMilestones.length > 0;
+  const hasGoalAchievement = goalAchievement && (goalAchievement.dailyAchieved || goalAchievement.weeklyAchieved);
 
   return (
     <div className="flex flex-col h-dvh bg-gradient-to-b from-blue-50 to-white overflow-hidden">
@@ -144,6 +148,46 @@ export function SessionCompleteScreen({
           )}
         </div>
       </div>
+
+      {/* 目標達成（達成があった場合のみ表示） */}
+      {hasGoalAchievement && goalAchievement && (
+        <div className="flex-shrink-0 px-6 pb-4">
+          <div className="bg-blue-50 rounded-2xl shadow-sm border border-blue-200 p-4">
+            <h2 className="text-sm font-medium text-blue-700 mb-3 flex items-center gap-2">
+              <span>🎯</span>
+              目標達成！
+            </h2>
+            <ul className="space-y-2">
+              {goalAchievement.dailyAchieved && (
+                <li className="flex items-center gap-3 p-2 bg-white rounded-lg">
+                  <span className="text-lg">🌟</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">
+                      今日の目標 {goalAchievement.dailyGoal}本を達成！
+                    </p>
+                    <p className="text-xs text-blue-600">
+                      素晴らしい！毎日の積み重ねが力になる！
+                    </p>
+                  </div>
+                </li>
+              )}
+              {goalAchievement.weeklyAchieved && (
+                <li className="flex items-center gap-3 p-2 bg-white rounded-lg">
+                  <span className="text-lg">🏅</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">
+                      今週の目標 {goalAchievement.weeklyGoal}本を達成！
+                    </p>
+                    <p className="text-xs text-blue-600">
+                      1週間の努力が実を結んだね！
+                    </p>
+                  </div>
+                </li>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* マイルストーン達成（達成があった場合のみ表示） */}
       {hasAchievedMilestones && (
