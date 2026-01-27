@@ -5,7 +5,7 @@
 
 declare global {
   interface Window {
-    dataLayer: unknown[];
+    dataLayer: (IArguments | unknown[])[];
     gtag: (...args: unknown[]) => void;
   }
 }
@@ -29,8 +29,9 @@ export function initGA4(): void {
 
   // dataLayer と gtag 関数を初期化
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer.push(args);
+  window.gtag = function gtag() {
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer.push(arguments);
   };
 
   window.gtag('js', new Date());
