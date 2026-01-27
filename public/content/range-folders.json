@@ -22,6 +22,20 @@
       "videoUrl": "/datas/history/2-1/3chinese_civilization/qas-output.mp4"
     },
     {
+      "id": "2-2/1jomon_era",
+      "chapter": "2-2",
+      "topic": "1jomon_era",
+      "displayName": "縄文時代",
+      "videoUrl": "/datas/history/2-2/1jomon_era/qas-output.mp4"
+    },
+    {
+      "id": "2-2/2yayoi_era",
+      "chapter": "2-2",
+      "topic": "2yayoi_era",
+      "displayName": "弥生時代",
+      "videoUrl": "/datas/history/2-2/2yayoi_era/qas-output.mp4"
+    },
+    {
       "id": "4-2/1edo_bakufu",
       "chapter": "4-2",
       "topic": "1edo_bakufu",
@@ -34,6 +48,20 @@
       "topic": "2sakoku",
       "displayName": "鎖国",
       "videoUrl": "/datas/history/4-2/2sakoku/qas-output.mp4"
+    },
+    {
+      "id": "4-3/1agriculture_industry",
+      "chapter": "4-3",
+      "topic": "1agriculture_industry",
+      "displayName": "農業と産業",
+      "videoUrl": "/datas/history/4-3/1agriculture_industry/qas-output.mp4"
+    },
+    {
+      "id": "4-3/2transport_cities",
+      "chapter": "4-3",
+      "topic": "2transport_cities",
+      "displayName": "交通と都市",
+      "videoUrl": "/datas/history/4-3/2transport_cities/qas-output.mp4"
     },
     {
       "id": "6-1/1ww1",
@@ -62,6 +90,34 @@
       "topic": "4asia_nationalism",
       "displayName": "アジアの民族運動",
       "videoUrl": "/datas/history/6-1/4asia_nationalism/qas-output.mp4"
+    },
+    {
+      "id": "6-2/1taisho_democracy",
+      "chapter": "6-2",
+      "topic": "1taisho_democracy",
+      "displayName": "大正デモクラシー",
+      "videoUrl": "/datas/history/6-2/1taisho_democracy/qas-output.mp4"
+    },
+    {
+      "id": "6-2/2social_movements",
+      "chapter": "6-2",
+      "topic": "2social_movements",
+      "displayName": "社会運動",
+      "videoUrl": "/datas/history/6-2/2social_movements/qas-output.mp4"
+    },
+    {
+      "id": "6-2/3taisho_culture",
+      "chapter": "6-2",
+      "topic": "3taisho_culture",
+      "displayName": "大正文化",
+      "videoUrl": "/datas/history/6-2/3taisho_culture/qas-output.mp4"
+    },
+    {
+      "id": "6-3/1world_depression",
+      "chapter": "6-3",
+      "topic": "1world_depression",
+      "displayName": "世界恐慌",
+      "videoUrl": "/datas/history/6-3/1world_depression/qas-output.mp4"
     }
   ]
 }
