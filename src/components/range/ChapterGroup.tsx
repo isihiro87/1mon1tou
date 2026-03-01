@@ -15,12 +15,10 @@ interface ChapterGroupProps {
 
 // 章名を日本語に変換
 function getChapterDisplayName(chapter: string): string {
-  const chapterNames: Record<string, string> = {
-    '2-1': '第2章 古代文明の始まり',
-    '4-2': '第4章 江戸時代',
-    '6-1': '第6章 近代世界',
-  };
-  return chapterNames[chapter] || `第${chapter}章`;
+  const circledNumbers = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩'];
+  const [main, sub] = chapter.split('-');
+  const circled = circledNumbers[parseInt(sub, 10) - 1] || `(${sub})`;
+  return `${main}章${circled}`;
 }
 
 export function ChapterGroup({
